@@ -1,4 +1,4 @@
-package com.weve.Domain.Enum;
+package com.weve.domain.enums;
 
 public enum ValueCategory {
     Achievement, // 성취지향형

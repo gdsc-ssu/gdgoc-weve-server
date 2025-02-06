@@ -1,6 +1,6 @@
-package com.weve.Domain;
+package com.weve.domain;
 
-import com.weve.Domain.Enum.Language;
+import com.weve.domain.enums.Language;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;

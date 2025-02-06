@@ -1,8 +1,8 @@
-package com.weve.Domain;
+package com.weve.domain;
 
-import com.weve.Domain.Enum.HardshipCategory;
-import com.weve.Domain.Enum.JobCategory;
-import com.weve.Domain.Enum.ValueCategory;
+import com.weve.domain.enums.HardshipCategory;
+import com.weve.domain.enums.JobCategory;
+import com.weve.domain.enums.ValueCategory;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
