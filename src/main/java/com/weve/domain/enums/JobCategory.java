@@ -1,4 +1,4 @@
-package com.weve.Domain.Enum;
+package com.weve.domain.enums;
 
 public enum JobCategory {
     StabilitySeeking, // 안정추구형

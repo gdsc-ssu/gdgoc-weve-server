@@ -1,4 +1,4 @@
-package com.weve.Domain.Enum;
+package com.weve.domain.enums;
 
 public enum WorryCategory {
     CAREER,

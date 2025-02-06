@@ -1,7 +1,7 @@
-package com.weve.Domain;
+package com.weve.domain;
 
-import com.weve.Domain.Enum.WorryCategory;
-import com.weve.Domain.Enum.WorryStatus;
+import com.weve.domain.enums.WorryCategory;
+import com.weve.domain.enums.WorryStatus;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;

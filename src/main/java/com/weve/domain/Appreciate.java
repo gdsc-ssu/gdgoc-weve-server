@@ -1,4 +1,4 @@
-package com.weve.Domain;
+package com.weve.domain;
 
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -7,20 +7,14 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
-public class Answer {
+public class Appreciate {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "senior_id", nullable = false)
-    private User senior;
-
-    @ManyToOne
     @JoinColumn(name = "worry_id", nullable = false)
     private Worry worry;
 
-    private String answer;
-
-    private String letterImageUrl;
+    private boolean isRead;
 }

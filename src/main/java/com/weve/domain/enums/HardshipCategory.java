@@ -1,4 +1,4 @@
-package com.weve.Domain.Enum;
+package com.weve.domain.enums;
 
 public enum HardshipCategory {
     LogicalProblemSolving,  // 논리적 해결형
