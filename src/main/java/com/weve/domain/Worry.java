@@ -3,8 +3,7 @@ package com.weve.domain;
 import com.weve.domain.enums.WorryCategory;
 import com.weve.domain.enums.WorryStatus;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -12,6 +11,9 @@ import java.util.List;
 @Entity
 @Getter
 @Setter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Worry {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
