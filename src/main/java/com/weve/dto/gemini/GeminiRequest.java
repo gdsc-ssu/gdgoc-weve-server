@@ -8,7 +8,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ChatRequest {
+public class GeminiRequest {
     private List<Content> contents;
 
     @Getter
