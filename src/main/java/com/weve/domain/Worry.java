@@ -23,6 +23,7 @@ public class Worry {
     @JoinColumn(name = "junior_id", nullable = false)
     private User junior; // 고민을 작성한 청년 User
 
+    @Lob
     private String content;
 
     @Enumerated(EnumType.STRING)
