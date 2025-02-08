@@ -34,6 +34,8 @@ public class GeminiService {
         String requestUrl = apiUrl + "?key=" + geminiApiKey;
 
 
+
+
         ChatRequest request = ChatRequest.builder()
                 .contents(List.of(ChatRequest.Content.builder()
                         .parts(List.of(ChatRequest.Part.builder().text(prompt).build()))
