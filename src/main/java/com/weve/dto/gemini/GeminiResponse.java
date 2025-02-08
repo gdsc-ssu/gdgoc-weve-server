@@ -8,7 +8,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ChatResponse {
+public class GeminiResponse {
     private List<Candidate> candidates;
     private UsageMetadata usageMetadata;
     private String modelVersion;
