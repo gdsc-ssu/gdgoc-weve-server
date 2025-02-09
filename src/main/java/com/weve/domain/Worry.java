@@ -4,10 +4,9 @@ import com.weve.domain.common.BaseEntity;
 import com.weve.domain.enums.WorryCategory;
 import com.weve.domain.enums.WorryStatus;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Size;
 import lombok.*;
-import org.springframework.data.annotation.CreatedDate;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -25,7 +24,8 @@ public class Worry extends BaseEntity {
     @JoinColumn(name = "junior_id", nullable = false)
     private User junior; // 고민을 작성한 청년 User
 
-    @Lob
+    @Size(max = 300)
+    @Column(length = 300)
     private String content;
 
     @Enumerated(EnumType.STRING)
