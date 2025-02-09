@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.weve.domain.enums.HardshipCategory;
 import com.weve.domain.enums.JobCategory;
 import com.weve.domain.enums.ValueCategory;
+import com.weve.domain.enums.WorryCategory;
 import com.weve.dto.gemini.GeminiRequest;
 import com.weve.dto.gemini.GeminiResponse;
 import com.weve.dto.gemini.ExtractedCategoriesFromText;
@@ -55,11 +56,12 @@ public class GeminiService {
                         .build()))
                 .build();
 
-
         // Gemeni 응답 : 텍스트 분석 -> 3가지 카테고리 값 추출 -> JSON 형식으로 반환
         GeminiResponse response = restTemplate.postForObject(requestUrl, request, GeminiResponse.class);
         String result = response.getCandidates().get(0).getContent().getParts().get(0).getText();
         String cleanedResult = result.replaceAll("^```json|```$", "").trim(); // 마크다운 문법 제거 후, 순수 JSON만 반환
+
+        log.info("Gemini 응답: {}", cleanedResult);
 
         // JSON 문자열을 DTO로 변환
         ObjectMapper objectMapper = new ObjectMapper();
@@ -69,5 +71,30 @@ public class GeminiService {
             log.error("JSON 응답 처리 중 오류 발생: {}", e.getMessage(), e);
             return null;
         }
+    }
+
+    public WorryCategory analyzeWorry(String prompt) {
+        String requestUrl = apiUrl + "?key=" + geminiApiKey;
+
+        // 프롬프트 확장
+        String extendedPrompt = prompt + "\n\n"
+                + "Analyze the given text and determine the most suitable category from each of the following group:\n"
+                + "Choose one from: " + Arrays.toString(WorryCategory.values()) + ")\n"
+                + "Return only one category name without any additional text.";
+
+        // Gemeni 요청
+        GeminiRequest request = GeminiRequest.builder()
+                .contents(List.of(GeminiRequest.Content.builder()
+                        .parts(List.of(GeminiRequest.Part.builder().text(extendedPrompt).build()))
+                        .build()))
+                .build();
+
+        // Gemeni 응답 : 텍스트 분석 -> 카테고리 값 추출 -> JSON 형식으로 반환
+        GeminiResponse response = restTemplate.postForObject(requestUrl, request, GeminiResponse.class);
+        String result = response.getCandidates().get(0).getContent().getParts().get(0).getText();
+
+        log.info("Gemini 응답: {}", result);
+
+        return WorryCategory.valueOf(result.trim());
     }
 }

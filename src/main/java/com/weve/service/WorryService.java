@@ -5,6 +5,7 @@ import com.weve.common.api.payload.code.status.ErrorStatus;
 import com.weve.domain.CategoryMapping;
 import com.weve.domain.User;
 import com.weve.domain.Worry;
+import com.weve.domain.enums.WorryCategory;
 import com.weve.dto.gemini.ExtractedCategoriesFromText;
 import com.weve.dto.request.CreateWorryRequest;
 import com.weve.dto.response.CreateWorryResponse;
@@ -40,11 +41,15 @@ public class WorryService {
             throw new GeneralException(ErrorStatus.INVALID_USER_TYPE);
         }
 
+        // WorryCategory 추출
+        WorryCategory worryCategory = geminiService.analyzeWorry(request.getContent());
+
         // Worry 데이터 생성 및 저장
         Worry newWorry = Worry.builder()
                 .junior(user)
                 .content(request.getContent())
                 .isAnonymous(request.isAnonymous())
+                .category(worryCategory)
                 .build();
 
         worryRepository.save(newWorry);
