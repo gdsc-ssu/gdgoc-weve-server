@@ -6,6 +6,7 @@ import com.weve.domain.CategoryMapping;
 import com.weve.domain.User;
 import com.weve.domain.Worry;
 import com.weve.domain.enums.WorryCategory;
+import com.weve.domain.enums.WorryStatus;
 import com.weve.dto.gemini.ExtractedCategoriesFromText;
 import com.weve.dto.request.CreateWorryRequest;
 import com.weve.dto.response.CreateWorryResponse;
@@ -50,6 +51,7 @@ public class WorryService {
                 .content(request.getContent())
                 .isAnonymous(request.isAnonymous())
                 .category(worryCategory)
+                .status(WorryStatus.WAITING)
                 .build();
 
         worryRepository.save(newWorry);
