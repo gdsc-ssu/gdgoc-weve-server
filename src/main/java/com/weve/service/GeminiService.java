@@ -37,6 +37,9 @@ public class GeminiService {
     @Value("${gemini.api.key}")
     private String geminiApiKey;
 
+    /**
+     * 텍스트 분석 후, 카테고리(mapping category) 추출
+     */
     public ExtractedCategoriesFromText analyzeText(String prompt) {
         String requestUrl = apiUrl + "?key=" + geminiApiKey;
 
@@ -73,6 +76,9 @@ public class GeminiService {
         }
     }
 
+    /**
+     * 고민 내용 분석 후, 카테고리(worry category) 추출
+     */
     public WorryCategory analyzeWorry(String prompt) {
         String requestUrl = apiUrl + "?key=" + geminiApiKey;
 

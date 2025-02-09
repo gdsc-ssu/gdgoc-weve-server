@@ -1,9 +1,11 @@
 package com.weve.domain;
 
+import com.weve.domain.common.BaseEntity;
 import com.weve.domain.enums.WorryCategory;
 import com.weve.domain.enums.WorryStatus;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -14,7 +16,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Worry {
+public class Worry extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -31,8 +33,6 @@ public class Worry {
 
     @Enumerated(EnumType.STRING)
     private WorryStatus status;
-
-    private LocalDateTime createdAt;
 
     private boolean isAnonymous;
 

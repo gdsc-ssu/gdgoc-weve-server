@@ -1,5 +1,6 @@
 package com.weve.domain;
 
+import com.weve.domain.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -7,7 +8,7 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
-public class Appreciate {
+public class Appreciate extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

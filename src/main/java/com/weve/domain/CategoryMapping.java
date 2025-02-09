@@ -1,5 +1,6 @@
 package com.weve.domain;
 
+import com.weve.domain.common.BaseEntity;
 import com.weve.domain.enums.HardshipCategory;
 import com.weve.domain.enums.JobCategory;
 import com.weve.domain.enums.ValueCategory;
@@ -12,7 +13,7 @@ import lombok.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class CategoryMapping {
+public class CategoryMapping extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
