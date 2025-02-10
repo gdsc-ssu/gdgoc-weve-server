@@ -1,9 +1,14 @@
 package com.weve.domain.enums;
 
+import lombok.AllArgsConstructor;
+
+@AllArgsConstructor
 public enum ValueCategory {
-    Achievement, // 성취지향형
-    Relationship, // 인간관계형
-    SelfDevelopment, // 자기개발형
-    FreedomIndependence, // 자유독립형
-    StabilityPeace // 안정평온형
+    ACHIEVEMENT("성취지향형"),
+    RELATIONSHIP("인간관계형"),
+    SELF_DEVELOPMENT("자기개발형"),
+    FREEDOM_INDEPENDENCE("자유독립형"),
+    STABILITY_PEACE("안정평온형");
+
+    private final String description;
 }

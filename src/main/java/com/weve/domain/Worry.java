@@ -1,11 +1,12 @@
 package com.weve.domain;
 
+import com.weve.domain.common.BaseEntity;
 import com.weve.domain.enums.WorryCategory;
 import com.weve.domain.enums.WorryStatus;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -14,7 +15,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Worry {
+public class Worry extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -23,6 +24,8 @@ public class Worry {
     @JoinColumn(name = "junior_id", nullable = false)
     private User junior; // 고민을 작성한 청년 User
 
+    @Size(max = 300)
+    @Column(length = 300)
     private String content;
 
     @Enumerated(EnumType.STRING)
@@ -30,8 +33,6 @@ public class Worry {
 
     @Enumerated(EnumType.STRING)
     private WorryStatus status;
-
-    private LocalDateTime createdAt;
 
     private boolean isAnonymous;
 
