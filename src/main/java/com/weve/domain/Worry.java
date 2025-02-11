@@ -28,6 +28,8 @@ public class Worry extends BaseEntity {
     @Column(length = 300)
     private String content;
 
+    private String title;
+
     @Enumerated(EnumType.STRING)
     private WorryCategory category;
 

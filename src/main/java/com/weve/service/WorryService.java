@@ -10,12 +10,17 @@ import com.weve.domain.enums.WorryStatus;
 import com.weve.dto.gemini.ExtractedCategoriesFromText;
 import com.weve.dto.request.CreateWorryRequest;
 import com.weve.dto.response.CreateWorryResponse;
+import com.weve.dto.response.GetWorriesResponse;
 import com.weve.repository.CategoryMappingRepository;
 import com.weve.repository.WorryRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDate;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -74,5 +79,32 @@ public class WorryService {
         return CreateWorryResponse.builder()
                 .worryId(newWorry.getId())
                 .build();
+    }
+
+    /**
+     * 고민 목록 조회(JUNIOR ver)
+     */
+    public GetWorriesResponse.juniorVer getWorriesForJunior(Long userId) {
+
+        log.info("[고민 목록 조회(JUNIOR ver)] userId={}", userId);
+
+        User user = userService.findById(userId);
+
+        // 유저 타입 검사
+        if(user.isSenior()) {
+            throw new GeneralException(ErrorStatus.INVALID_USER_TYPE);
+        }
+
+        List<GetWorriesResponse.WorryForJunior> worries = user.getWorries().stream()
+                .map(worry -> {
+                    return GetWorriesResponse.WorryForJunior.builder()
+                            .worryId(worry.getId())
+                            .title(worry.getTitle())
+                            .status(worry.getStatus())
+                            .build();
+                })
+                .toList();
+
+        return GetWorriesResponse.juniorVer.builder().worryList(worries).build();
     }
 }
