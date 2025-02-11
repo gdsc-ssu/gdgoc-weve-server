@@ -18,9 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -50,10 +48,14 @@ public class WorryService {
         // WorryCategory 추출
         WorryCategory worryCategory = geminiService.analyzeWorry(request.getContent());
 
+        // 제목 생성(1줄 요약)
+        String title = geminiService.summarize(request.getContent());
+
         // Worry 데이터 생성 및 저장
         Worry newWorry = Worry.builder()
                 .junior(user)
                 .content(request.getContent())
+                .title(title)
                 .isAnonymous(request.isAnonymous())
                 .category(worryCategory)
                 .status(WorryStatus.WAITING)
