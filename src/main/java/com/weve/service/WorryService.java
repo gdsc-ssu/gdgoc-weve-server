@@ -1,7 +1,5 @@
 package com.weve.service;
 
-import com.weve.common.api.exception.GeneralException;
-import com.weve.common.api.payload.code.status.ErrorStatus;
 import com.weve.domain.CategoryMapping;
 import com.weve.domain.User;
 import com.weve.domain.Worry;
@@ -40,9 +38,7 @@ public class WorryService {
         User user = userService.findById(userId);
 
         // 유저 타입 검사(청년만 고민 작성 가능)
-        if(user.isSenior()) {
-            throw new GeneralException(ErrorStatus.INVALID_USER_TYPE);
-        }
+        userService.checkIfJunior(user);
 
         // WorryCategory 추출
         WorryCategory worryCategory = geminiService.analyzeWorry(request.getContent());
@@ -92,9 +88,7 @@ public class WorryService {
         User user = userService.findById(userId);
 
         // 유저 타입 검사
-        if(user.isSenior()) {
-            throw new GeneralException(ErrorStatus.INVALID_USER_TYPE);
-        }
+        userService.checkIfJunior(user);
 
         List<GetWorriesResponse.WorryForJunior> worries = user.getWorries().stream()
                 .map(worry -> {
@@ -119,15 +113,13 @@ public class WorryService {
         User user = userService.findById(userId);
 
         // 유저 타입 검사
-        if(!user.isSenior()) {
-            throw new GeneralException(ErrorStatus.INVALID_USER_TYPE);
-        }
+        userService.checkIfSenior(user);
 
         // User의 CategoryMapping에서 카테고리 정보 가져오기
         CategoryMapping categoryMapping = user.getCategoryMapping();
         JobCategory job = categoryMapping.getJob();
         ValueCategory value = categoryMapping.getValue();
-        HardshipCategory hardship = categoryMapping.getHardship();
+        HardshipCategory hardship = categoryMapping.getHardship();;
 
         // 고민 목록 조회
         List<Worry> careerWorries = getMatchingWorries(job, value, hardship, WorryCategory.CAREER);
