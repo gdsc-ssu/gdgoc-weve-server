@@ -2,6 +2,7 @@ package com.weve.domain;
 
 import com.weve.domain.common.BaseEntity;
 import com.weve.domain.enums.Language;
+import com.weve.domain.enums.UserType;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -31,7 +32,8 @@ public class User extends BaseEntity {
 
     private String phoneNumber;
 
-    private boolean isSenior;
+    @Enumerated(EnumType.STRING)
+    private UserType userType;
 
     @OneToMany(mappedBy = "junior", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Worry> worries;
