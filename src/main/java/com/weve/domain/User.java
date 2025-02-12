@@ -41,6 +41,6 @@ public class User extends BaseEntity {
     @OneToMany(mappedBy = "senior", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Answer> answers;
 
-    @OneToOne(mappedBy = "senior", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private CategoryMapping categoryMapping;
+    @Embedded
+    private MatchingInfo matchingInfo;
 }

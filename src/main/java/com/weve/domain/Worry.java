@@ -40,8 +40,8 @@ public class Worry extends BaseEntity {
 
     private String mp4;
 
-    @OneToOne(mappedBy = "worry", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private CategoryMapping categoryMapping;
+    @Embedded
+    private MatchingInfo matchingInfo;
 
     @OneToMany(mappedBy = "worry", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Answer> answers;

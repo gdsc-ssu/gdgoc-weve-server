@@ -1,6 +1,6 @@
 package com.weve.service;
 
-import com.weve.domain.CategoryMapping;
+import com.weve.domain.MatchingInfo;
 import com.weve.domain.User;
 import com.weve.domain.Worry;
 import com.weve.domain.enums.*;
@@ -8,7 +8,6 @@ import com.weve.dto.gemini.ExtractedCategoriesFromText;
 import com.weve.dto.request.CreateWorryRequest;
 import com.weve.dto.response.CreateWorryResponse;
 import com.weve.dto.response.GetWorriesResponse;
-import com.weve.repository.CategoryMappingRepository;
 import com.weve.repository.WorryRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,7 +25,6 @@ public class WorryService {
     private final UserService userService;
     private final GeminiService geminiService;
     private final WorryRepository worryRepository;
-    private final CategoryMappingRepository categoryMappingRepository;
 
     /**
      * 고민 작성하기
@@ -46,6 +44,14 @@ public class WorryService {
         // 제목 생성(1줄 요약)
         String title = geminiService.summarize(request.getContent());
 
+        // 텍스트 분석 및 매칭용 카테고리 추출
+        ExtractedCategoriesFromText categories = geminiService.analyzeText(request.getContent());
+        MatchingInfo matchingInfo = MatchingInfo.builder()
+                .job(categories.getJob())
+                .value(categories.getValue())
+                .hardship(categories.getHardship())
+                .build();
+
         // Worry 데이터 생성 및 저장
         Worry newWorry = Worry.builder()
                 .junior(user)
@@ -54,24 +60,11 @@ public class WorryService {
                 .isAnonymous(request.isAnonymous())
                 .category(worryCategory)
                 .status(WorryStatus.WAITING)
+                .matchingInfo(matchingInfo)
                 .build();
 
         worryRepository.save(newWorry);
         log.info("생성된 고민 ID: {}", newWorry.getId());
-
-        // 텍스트 분석 및 카테고리 추출
-        ExtractedCategoriesFromText categories = geminiService.analyzeText(request.getContent());
-
-        // Category Mapping 데이터 생성 및 저장
-        CategoryMapping newCategoryMapping = CategoryMapping.builder()
-                .worry(newWorry)
-                .job(categories.getJob())
-                .value(categories.getValue())
-                .hardship(categories.getHardship())
-                .build();
-
-        categoryMappingRepository.save(newCategoryMapping);
-        log.info("생성된 카테고리 매핑 ID: {}", newCategoryMapping.getId());
 
         return CreateWorryResponse.builder()
                 .worryId(newWorry.getId())
@@ -115,11 +108,11 @@ public class WorryService {
         // 유저 타입 검사
         userService.checkIfSenior(user);
 
-        // User의 CategoryMapping에서 카테고리 정보 가져오기
-        CategoryMapping categoryMapping = user.getCategoryMapping();
-        JobCategory job = categoryMapping.getJob();
-        ValueCategory value = categoryMapping.getValue();
-        HardshipCategory hardship = categoryMapping.getHardship();;
+        // User의 매칭 정보에서 카테고리 정보 가져오기
+        MatchingInfo matchingInfo = user.getMatchingInfo();
+        JobCategory job = matchingInfo.getJob();
+        ValueCategory value = matchingInfo.getValue();
+        HardshipCategory hardship = matchingInfo.getHardship();;
 
         // 고민 목록 조회
         List<Worry> careerWorries = getMatchingWorries(job, value, hardship, WorryCategory.CAREER);
@@ -170,14 +163,14 @@ public class WorryService {
     // 매칭 고민 목록 조회
     private List<Worry> getMatchingWorries(JobCategory job, ValueCategory value, HardshipCategory hardship, WorryCategory category) {
         // 3개 조건 모두 일치하는 Worry들
-        List<Worry> threeMatching = worryRepository.findByCategoryMapping_JobAndCategoryMapping_ValueAndCategoryMapping_HardshipAndCategory(job, value, hardship, category);
+        List<Worry> threeMatching = worryRepository.findByMatchingInfo_JobAndMatchingInfo_ValueAndMatchingInfo_HardshipAndCategory(job, value, hardship, category);
 
         // 2개 조건: job, value
-        List<Worry> twoMatching1 = worryRepository.findByCategoryMapping_JobAndCategoryMapping_ValueAndCategory(job, value, category);
+        List<Worry> twoMatching1 = worryRepository.findByMatchingInfo_JobAndMatchingInfo_ValueAndCategory(job, value, category);
         // 2개 조건: job, hardship
-        List<Worry> twoMatching2 = worryRepository.findByCategoryMapping_JobAndCategoryMapping_HardshipAndCategory(job, hardship, category);
+        List<Worry> twoMatching2 = worryRepository.findByMatchingInfo_JobAndMatchingInfo_HardshipAndCategory(job, hardship, category);
         // 2개 조건: value, hardship
-        List<Worry> twoMatching3 = worryRepository.findByCategoryMapping_ValueAndCategoryMapping_HardshipAndCategory(value, hardship, category);
+        List<Worry> twoMatching3 = worryRepository.findByMatchingInfo_ValueAndMatchingInfo_HardshipAndCategory(value, hardship, category);
         // 2개 조건 결합(Set으로 중복 제거)
         Set<Worry> twoMatching = new HashSet<>();
         twoMatching.addAll(twoMatching1);
@@ -185,11 +178,11 @@ public class WorryService {
         twoMatching.addAll(twoMatching3);
 
         // 1개 조건: job
-        List<Worry> oneMatching1 = worryRepository.findByCategoryMapping_JobAndCategory(job, category);
+        List<Worry> oneMatching1 = worryRepository.findByMatchingInfo_JobAndCategory(job, category);
         // 1개 조건: value
-        List<Worry> oneMatching2 = worryRepository.findByCategoryMapping_ValueAndCategory(value, category);
+        List<Worry> oneMatching2 = worryRepository.findByMatchingInfo_ValueAndCategory(value, category);
         // 1개 조건: hardship
-        List<Worry> oneMatching3 = worryRepository.findByCategoryMapping_HardshipAndCategory(hardship, category);
+        List<Worry> oneMatching3 = worryRepository.findByMatchingInfo_HardshipAndCategory(hardship, category);
         // 1개 조건 결합(Set으로 중복 제거)
         Set<Worry> oneMatching = new HashSet<>();
         oneMatching.addAll(oneMatching1);
