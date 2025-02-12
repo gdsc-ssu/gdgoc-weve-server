@@ -37,7 +37,7 @@ public class WorryController {
      */
     @GetMapping
     public BasicResponse<?> getWorries(@RequestHeader Long userId,
-                                       @RequestParam String userType) {
+                                       @RequestParam("usertype") String userType) {
 
         if (userType.equals("junior")) {
             // JUNIOR ver
@@ -45,7 +45,8 @@ public class WorryController {
             return BasicResponse.onSuccess(response);
         } else {
             // SENIOR ver
-            return BasicResponse.onSuccess();
+            GetWorriesResponse.seniorVer response = worryService.getWorriesForSenior(userId);
+            return BasicResponse.onSuccess(response);
         }
     }
 }

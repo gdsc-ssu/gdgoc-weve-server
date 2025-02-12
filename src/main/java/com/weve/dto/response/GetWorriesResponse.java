@@ -33,6 +33,26 @@ public class GetWorriesResponse {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class seniorVer {
+        private WorryCategoryInfo worryList;
+    }
 
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class WorryCategoryInfo {
+        private List<WorryForSenior> career;
+        private List<WorryForSenior> love;
+        private List<WorryForSenior> relationship;
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class WorryForSenior {
+        private Long worryId;
+        private String author;
+        private String title;
     }
 }
