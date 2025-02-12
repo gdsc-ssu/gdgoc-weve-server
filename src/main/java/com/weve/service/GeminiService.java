@@ -64,7 +64,7 @@ public class GeminiService {
         String result = response.getCandidates().get(0).getContent().getParts().get(0).getText();
         String cleanedResult = result.replaceAll("^```json|```$", "").trim(); // 마크다운 문법 제거 후, 순수 JSON만 반환
 
-        log.info("Gemini 응답: {}", cleanedResult);
+        log.info("추출된 매칭 정보: {}", cleanedResult);
 
         // JSON 문자열을 DTO로 변환
         ObjectMapper objectMapper = new ObjectMapper();
@@ -99,7 +99,7 @@ public class GeminiService {
         GeminiResponse response = restTemplate.postForObject(requestUrl, request, GeminiResponse.class);
         String result = response.getCandidates().get(0).getContent().getParts().get(0).getText();
 
-        log.info("Gemini 응답: {}", result);
+        log.info("추출된 고민 카테고리: {}", result);
 
         return WorryCategory.valueOf(result.trim());
     }
