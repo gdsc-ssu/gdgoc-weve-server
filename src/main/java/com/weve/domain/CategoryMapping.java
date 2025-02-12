@@ -18,11 +18,11 @@ public class CategoryMapping extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "worry_id")
     private Worry worry;
 
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "senior_id")
     private User senior;
 
