@@ -123,7 +123,7 @@ public class WorryService {
                 .map(worry -> {
                     return GetWorriesResponse.WorryForSenior.builder()
                             .worryId(worry.getId())
-                            .author(worry.getJunior().getName())
+                            .author(worry.isAnonymous() ? "위명의 위비" : worry.getJunior().getName())
                             .title(worry.getTitle())
                             .build();
                 })
@@ -133,7 +133,7 @@ public class WorryService {
                 .map(worry -> {
                     return GetWorriesResponse.WorryForSenior.builder()
                             .worryId(worry.getId())
-                            .author(worry.getJunior().getName())
+                            .author(worry.isAnonymous() ? "위명의 위비" : worry.getJunior().getName())
                             .title(worry.getTitle())
                             .build();
                 })
@@ -143,7 +143,7 @@ public class WorryService {
                 .map(worry -> {
                     return GetWorriesResponse.WorryForSenior.builder()
                             .worryId(worry.getId())
-                            .author(worry.getJunior().getName())
+                            .author(worry.isAnonymous() ? "위명의 위비" : worry.getJunior().getName())
                             .title(worry.getTitle())
                             .build();
                 })
