@@ -64,7 +64,7 @@ public class GeminiService {
         String result = response.getCandidates().get(0).getContent().getParts().get(0).getText();
         String cleanedResult = result.replaceAll("^```json|```$", "").trim(); // 마크다운 문법 제거 후, 순수 JSON만 반환
 
-        log.info("Gemini 응답: {}", cleanedResult);
+        log.info("추출된 매칭 정보: {}", cleanedResult);
 
         // JSON 문자열을 DTO로 변환
         ObjectMapper objectMapper = new ObjectMapper();
@@ -99,8 +99,36 @@ public class GeminiService {
         GeminiResponse response = restTemplate.postForObject(requestUrl, request, GeminiResponse.class);
         String result = response.getCandidates().get(0).getContent().getParts().get(0).getText();
 
-        log.info("Gemini 응답: {}", result);
+        log.info("추출된 고민 카테고리: {}", result);
 
         return WorryCategory.valueOf(result.trim());
+    }
+
+    /**
+     * 10~15자 내 1줄 요약(고민 내용 분석 후, 제목 생성)
+     */
+    public String summarize(String prompt) {
+        String requestUrl = apiUrl + "?key=" + geminiApiKey;
+
+        // 프롬프트 확장
+        String extendedPrompt = prompt + "\n\n"
+                + "Summarize the given text into a single sentence in a natural speaking tone, using polite language"
+                + "Keep it between 10 to 15 characters."
+                + "Return only the summary without any additional text and without a period at the end";
+
+        // Gemini 요청 생성
+        GeminiRequest request = GeminiRequest.builder()
+                .contents(List.of(GeminiRequest.Content.builder()
+                        .parts(List.of(GeminiRequest.Part.builder().text(extendedPrompt).build()))
+                        .build()))
+                .build();
+
+        // Gemini 응답 처리
+        GeminiResponse response = restTemplate.postForObject(requestUrl, request, GeminiResponse.class);
+        String result = response.getCandidates().get(0).getContent().getParts().get(0).getText();
+
+        log.info("Gemini 응답: {}", result);
+
+        return result.trim();
     }
 }

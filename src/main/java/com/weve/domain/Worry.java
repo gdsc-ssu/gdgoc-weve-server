@@ -11,7 +11,6 @@ import java.util.List;
 
 @Entity
 @Getter
-@Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -28,6 +27,8 @@ public class Worry extends BaseEntity {
     @Column(length = 300)
     private String content;
 
+    private String title;
+
     @Enumerated(EnumType.STRING)
     private WorryCategory category;
 
@@ -37,6 +38,9 @@ public class Worry extends BaseEntity {
     private boolean isAnonymous;
 
     private String mp4;
+
+    @Embedded
+    private MatchingInfo matchingInfo;
 
     @OneToMany(mappedBy = "worry", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Answer> answers;

@@ -2,6 +2,7 @@ package com.weve.domain;
 
 import com.weve.domain.common.BaseEntity;
 import com.weve.domain.enums.Language;
+import com.weve.domain.enums.UserType;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -10,7 +11,6 @@ import java.util.List;
 
 @Entity
 @Getter
-@Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -31,7 +31,8 @@ public class User extends BaseEntity {
 
     private String phoneNumber;
 
-    private boolean isSenior;
+    @Enumerated(EnumType.STRING)
+    private UserType userType;
 
     @OneToMany(mappedBy = "junior", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Worry> worries;
@@ -39,6 +40,6 @@ public class User extends BaseEntity {
     @OneToMany(mappedBy = "senior", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Answer> answers;
 
-    @OneToMany(mappedBy = "senior", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<CategoryMapping> categoryMappings;
+    @Embedded
+    private MatchingInfo matchingInfo;
 }
