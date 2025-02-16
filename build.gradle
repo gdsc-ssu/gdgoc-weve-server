@@ -38,14 +38,21 @@ dependencies {
     // Google Speech To Text
     implementation 'com.google.cloud:google-cloud-speech:4.51.0'
 
-    // Spring Security
+    // Spring Boot Security
     implementation 'org.springframework.boot:spring-boot-starter-security'
-    testImplementation 'org.springframework.security:spring-security-test'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
 
     // JWT
     implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
     runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
+
+    // OAuth2 관련 의존성 (OAuth 로그인 사용 시)
+    implementation 'org.springframework.security:spring-security-oauth2-core:6.2.1'
+    implementation 'org.springframework.security:spring-security-oauth2-jose:6.2.1'
+
+    // Security 테스트 의존성
+    testImplementation 'org.springframework.security:spring-security-test'
 }
 
 tasks.named('test') {
