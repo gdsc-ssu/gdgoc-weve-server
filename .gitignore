@@ -6,6 +6,7 @@ build/
 !**/src/test/**/build/
 **/application.yml
 **/application-test.yml
+**/resources/gcp/
 
 ### STS ###
 .apt_generated
