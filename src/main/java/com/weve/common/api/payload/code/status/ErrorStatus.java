@@ -1,5 +1,6 @@
 package com.weve.common.api.payload.code.status;
 
+import com.google.api.Http;
 import com.weve.common.api.payload.code.BaseErrorCode;
 import com.weve.common.api.payload.code.ErrorReasonDTO;
 import lombok.AllArgsConstructor;
