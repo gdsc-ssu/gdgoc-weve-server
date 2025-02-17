@@ -37,6 +37,9 @@ dependencies {
 
     // Google Speech To Text
     implementation 'com.google.cloud:google-cloud-speech:4.51.0'
+
+    // Google Text To Speech
+    implementation 'com.google.cloud:google-cloud-texttospeech:2.57.0'
 }
 
 tasks.named('test') {
