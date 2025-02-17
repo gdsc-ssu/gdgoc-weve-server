@@ -18,7 +18,7 @@ public class Answer extends BaseEntity {
     @JoinColumn(name = "senior_id", nullable = false)
     private User senior;
 
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "worry_id", nullable = false)
     private Worry worry;
 

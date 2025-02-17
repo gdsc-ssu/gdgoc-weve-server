@@ -14,7 +14,7 @@ public class Appreciate extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "worry_id", nullable = false)
     private Worry worry;
 
