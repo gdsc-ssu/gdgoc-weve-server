@@ -1,11 +1,12 @@
 package com.weve.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.weve.domain.enums.UserType;
 import lombok.*;
 
 import java.time.LocalDate;
 
-@Getter @Setter
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -16,4 +17,5 @@ public class UserRequestDto {
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd") // JSON → LocalDate 변환
     private LocalDate birth;
+    private UserType userType;
 }

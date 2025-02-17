@@ -3,6 +3,7 @@ package com.weve.service;
 // 인증 서비스 (로그인하고 jwt 생성)
 
 import com.weve.domain.User;
+import com.weve.domain.enums.UserType;
 import com.weve.repository.UserRepository;
 import com.weve.security.JwtUtil;
 import org.springframework.stereotype.Service;
@@ -22,7 +23,7 @@ public class AuthService {
     }
 
     // 회원가입
-    public boolean register(String name, String phoneNumber, LocalDate birth) {
+    public boolean register(String name, String phoneNumber, LocalDate birth, UserType userType) {
 
         Optional<User> existingUser = userRepository.findByPhoneNumber(phoneNumber);
         if (existingUser.isPresent()) {
@@ -33,6 +34,7 @@ public class AuthService {
                 .name(name)
                 .phoneNumber(phoneNumber)
                 .birth(birth)  // null 허용
+                .userType(userType)
                 .build();
 
         userRepository.save(newUser);
