@@ -53,6 +53,19 @@ dependencies {
 
     // Security 테스트 의존성
     testImplementation 'org.springframework.security:spring-security-test'
+
+    // Protobuf (Google Speech API 사용 시 필수)
+    implementation 'com.google.protobuf:protobuf-java:3.25.1'
+    implementation 'com.google.protobuf:protobuf-java-util:3.25.1'
+
+    // gRPC (Google Speech API와 통신에 필요)
+    implementation 'io.grpc:grpc-protobuf:1.59.0'
+    implementation 'io.grpc:grpc-stub:1.59.0'
+    implementation 'io.grpc:grpc-netty-shaded:1.59.0'
+
+    // Google Cloud 인증 라이브러리
+    implementation 'com.google.auth:google-auth-library-oauth2-http:1.22.0'
+
 }
 
 tasks.named('test') {

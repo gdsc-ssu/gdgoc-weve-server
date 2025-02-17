@@ -20,21 +20,30 @@ public class AuthService {
         this.jwtUtil = jwtUtil;
     }
 
-    public String login(String name, String phoneNumber) {
+    // 회원가입
+    public boolean register(String name, String phoneNumber, String birth) {
+        Optional<User> existingUser = userRepository.findByPhoneNumber(phoneNumber);
+        if (existingUser.isPresent()) {
+            return false;  // 이미 등록된 전화번호
+        }
+
+        User newUser = User.builder()
+                .name(name)  // null 허용
+                .phoneNumber(phoneNumber)
+                .birth(birth)
+                .build();
+
+        userRepository.save(newUser);
+        return true;
+    }
+
+    // 로그인
+    public String login(String phoneNumber) {
         Optional<User> userOptional = userRepository.findByPhoneNumber(phoneNumber);
 
         if (userOptional.isPresent()) {
-            User user = userOptional.get();
-            if (user.getName().equals(name)) {
-                return jwtUtil.generateToken(phoneNumber);
-            }
-        } else {
-            // 새 사용자 등록
-            User newUser = User.builder().name(name).phoneNumber(phoneNumber).build();
-            userRepository.save(newUser);
-            return jwtUtil.generateToken(phoneNumber);
+            return jwtUtil.generateToken(phoneNumber); // jwt 발급
         }
-
-        throw new IllegalArgumentException("이름 또는 전화번호가 잘못되었습니다.");
+        return null; // 등록되지 않은 사용자
     }
 }

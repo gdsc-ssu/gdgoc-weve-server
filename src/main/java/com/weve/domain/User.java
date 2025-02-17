@@ -1,5 +1,6 @@
 package com.weve.domain;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.weve.domain.common.BaseEntity;
 import com.weve.domain.enums.Language;
 import com.weve.domain.enums.UserType;
@@ -22,7 +23,7 @@ public class User extends BaseEntity {
 
     private String name;
 
-    private Date birth;
+    private String birth;
 
     private String nationality;
 
