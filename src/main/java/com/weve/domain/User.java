@@ -6,7 +6,9 @@ import com.weve.domain.enums.Language;
 import com.weve.domain.enums.UserType;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.format.annotation.DateTimeFormat;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
@@ -23,7 +25,9 @@ public class User extends BaseEntity {
 
     private String name;
 
-    private String birth;
+    @Column(nullable = true)
+    @DateTimeFormat(pattern = "yyyy-MM-dd") // 요청 시 JSON → Java 변환
+    private LocalDate birth;
 
     private String nationality;
 

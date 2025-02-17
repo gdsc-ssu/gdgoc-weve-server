@@ -1,11 +1,10 @@
 package com.weve.controller;
 
-// 인증 컨트롤러
+import com.weve.common.api.payload.BasicResponse;
+import com.weve.common.api.payload.code.status.ErrorStatus;
+import com.weve.dto.request.UserRequestDto;
 import com.weve.service.AuthService;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -19,37 +18,41 @@ public class AuthController {
 
     // 회원가입
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody Map<String, String> request) {
-        String name = request.get("name");
-        String phoneNumber = request.get("phoneNumber");
-        String birth = request.get("birth");  // null 가능
+    public BasicResponse<String> register(@RequestBody UserRequestDto request) {
 
-        if (phoneNumber == null || phoneNumber.isBlank()) {
-            return ResponseEntity.badRequest().body("전화번호를 입력하세요.");
+        // 전화번호 필수 체크
+        if (request.getPhoneNumber() == null || request.getPhoneNumber().isBlank()) {
+            return BasicResponse.onFailure(ErrorStatus._BAD_REQUEST.getCode(), "전화번호를 입력하세요.", null);
         }
 
-        boolean success = authService.register(name, phoneNumber, birth);
-        if(success) {
-            return ResponseEntity.ok(Map.of("message", "회원가입 성공"));
+        boolean success = authService.register(
+                request.getName(),
+                request.getPhoneNumber(),
+                request.getBirth()
+        );
+
+        if (success) {
+            return BasicResponse.onSuccess("회원가입 성공");
         } else {
-            return ResponseEntity.badRequest().body("이미 존재하는 전화번호입니다.");
+            return BasicResponse.onFailure(ErrorStatus.INVALID_USER_TYPE.getCode(), "이미 존재하는 전화번호입니다.", null);
         }
     }
 
     // 로그인
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody Map<String, String> request) {
-        String phoneNumber = request.get("phoneNumber");
+    public BasicResponse<?> login(@RequestBody UserRequestDto request) {
 
-        if (phoneNumber == null || phoneNumber.isBlank()) {
-            return ResponseEntity.badRequest().body("전화번호를 입력하세요.");
+        // 전화번호 필수 체크
+        if (request.getPhoneNumber() == null || request.getPhoneNumber().isBlank()) {
+            return BasicResponse.onFailure(ErrorStatus._BAD_REQUEST.getCode(), "전화번호를 입력하세요.", null);
         }
 
-        String token = authService.login(phoneNumber);
-        if(token == null) {
-            return ResponseEntity.status(404).body("등록되지 않은 전화번호입니다.");
+        String token = authService.login(request.getPhoneNumber());
+
+        if (token == null) {
+            return BasicResponse.onFailure(ErrorStatus.USER_NOT_FOUND.getCode(), "등록되지 않은 전화번호입니다.", null);
         }
 
-        return ResponseEntity.ok(Map.of("token", token));
+        return BasicResponse.onSuccess(token);
     }
 }

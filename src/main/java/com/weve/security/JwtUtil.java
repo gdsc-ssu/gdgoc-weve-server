@@ -1,42 +1,49 @@
 package com.weve.security;
 
-// jwt 토큰을 생성하고 검증
-
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.stereotype.Component;
-import java.security.Key;
+
+import javax.crypto.SecretKey;
 import java.util.Date;
 
 @Component
 public class JwtUtil {
+    private static final String SECRET_KEY = "YourSuperSecretKeyForJWTGenerationYourSuperSecretKey";
+    private static final long EXPIRATION_TIME = 86400000; // 24시간
 
-    private static final String SECRET_KEY = "YourSuperSecretKeyForJwtMustBeLongEnough";
-    private static final long EXPIRATION_TIME = 86400000; // 1일
+    private final SecretKey key = Keys.hmacShaKeyFor(SECRET_KEY.getBytes());
 
-    private Key getSigningKey() {
-        return Keys.hmacShaKeyFor(SECRET_KEY.getBytes());
-    }
-
+    // JWT 토큰 생성
     public String generateToken(String phoneNumber) {
         return Jwts.builder()
                 .setSubject(phoneNumber)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
-                .signWith(getSigningKey(), SignatureAlgorithm.HS256)
+                .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
     }
 
-    public String validateToken(String token) {
+    // JWT 토큰에서 사용자 전화번호 추출
+    public String extractPhoneNumber(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody()
+                .getSubject();
+    }
+
+    // JWT 토큰 유효성 검증 (true/false 반환)
+    public boolean validateToken(String token) {
         try {
-            return Jwts.parserBuilder()
-                    .setSigningKey(getSigningKey())
+            Jwts.parserBuilder()
+                    .setSigningKey(key)
                     .build()
-                    .parseClaimsJws(token)
-                    .getBody()
-                    .getSubject();
-        } catch (JwtException e) {
-            return null;
+                    .parseClaimsJws(token);
+            return true;
+        } catch (JwtException | IllegalArgumentException e) {
+            return false;
         }
     }
 }

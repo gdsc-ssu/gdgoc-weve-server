@@ -7,6 +7,7 @@ import com.weve.repository.UserRepository;
 import com.weve.security.JwtUtil;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.Optional;
 
 @Service
@@ -21,16 +22,17 @@ public class AuthService {
     }
 
     // 회원가입
-    public boolean register(String name, String phoneNumber, String birth) {
+    public boolean register(String name, String phoneNumber, LocalDate birth) {
+
         Optional<User> existingUser = userRepository.findByPhoneNumber(phoneNumber);
         if (existingUser.isPresent()) {
             return false;  // 이미 등록된 전화번호
         }
 
         User newUser = User.builder()
-                .name(name)  // null 허용
+                .name(name)
                 .phoneNumber(phoneNumber)
-                .birth(birth)
+                .birth(birth)  // null 허용
                 .build();
 
         userRepository.save(newUser);
@@ -39,11 +41,8 @@ public class AuthService {
 
     // 로그인
     public String login(String phoneNumber) {
-        Optional<User> userOptional = userRepository.findByPhoneNumber(phoneNumber);
-
-        if (userOptional.isPresent()) {
-            return jwtUtil.generateToken(phoneNumber); // jwt 발급
-        }
-        return null; // 등록되지 않은 사용자
+        return userRepository.findByPhoneNumber(phoneNumber)
+                .map(user -> jwtUtil.generateToken(user.getPhoneNumber()))
+                .orElse(null);
     }
 }
