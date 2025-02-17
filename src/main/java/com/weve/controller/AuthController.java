@@ -4,17 +4,15 @@ import com.weve.common.api.payload.BasicResponse;
 import com.weve.common.api.payload.code.status.ErrorStatus;
 import com.weve.dto.request.UserRequestDto;
 import com.weve.service.AuthService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/auth")
+@RequiredArgsConstructor
 public class AuthController {
 
     private final AuthService authService;
-
-    public AuthController(AuthService authService) {
-        this.authService = authService;
-    }
 
     // 회원가입
     @PostMapping("/register")
