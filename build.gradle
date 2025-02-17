@@ -35,11 +35,41 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     runtimeOnly 'com.h2database:h2'
 
+    // Google Text To Speech
+    implementation 'com.google.cloud:google-cloud-texttospeech:2.57.0'
+
     // Google Speech To Text
     implementation 'com.google.cloud:google-cloud-speech:4.51.0'
 
-    // Google Text To Speech
-    implementation 'com.google.cloud:google-cloud-texttospeech:2.57.0'
+    // 로컬 환경 실행 시 Google Speech API 연동 에러 해결을 위한 라이브러리 구성-----------
+    // Protobuf
+    implementation 'com.google.protobuf:protobuf-java:3.25.1'
+    implementation 'com.google.protobuf:protobuf-java-util:3.25.1'
+
+    // gRPC
+    implementation 'io.grpc:grpc-protobuf:1.59.0'
+    implementation 'io.grpc:grpc-stub:1.59.0'
+    implementation 'io.grpc:grpc-netty-shaded:1.59.0'
+
+    // Google Cloud 인증 라이브러리
+    implementation 'com.google.auth:google-auth-library-oauth2-http:1.22.0'
+    // -----------------------------------------------------------------------
+
+    // Spring Boot Security
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+
+    // JWT
+    implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
+    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
+    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
+
+    // OAuth2 관련 의존성 (OAuth 로그인 사용 시)
+    implementation 'org.springframework.security:spring-security-oauth2-core:6.2.1'
+    implementation 'org.springframework.security:spring-security-oauth2-jose:6.2.1'
+
+    // Security 테스트 의존성
+    testImplementation 'org.springframework.security:spring-security-test'
 }
 
 tasks.named('test') {
