@@ -28,7 +28,8 @@ public class AuthController {
         boolean success = authService.register(
                 request.getName(),
                 request.getPhoneNumber(),
-                request.getBirth()
+                request.getBirth(),
+                request.getUserType()
         );
 
         if (success) {
