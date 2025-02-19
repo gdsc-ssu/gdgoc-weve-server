@@ -11,6 +11,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+
 @RestController
 @RequiredArgsConstructor
 @Validated
@@ -25,7 +27,7 @@ public class WorryController {
      */
     @PostMapping
     public BasicResponse<CreateWorryResponse> createWorry(@RequestHeader Long userId,
-                                                          @RequestBody @Valid CreateWorryRequest request){
+                                                          @RequestBody @Valid CreateWorryRequest request) {
 
         CreateWorryResponse response = worryService.createWorry(userId, request);
 
