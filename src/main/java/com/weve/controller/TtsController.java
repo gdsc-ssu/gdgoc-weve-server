@@ -15,6 +15,7 @@ public class TtsController {
 
     private final TtsService ttsService;
 
+    // 테스트용(프론트 사용 X)
     @GetMapping
     public ResponseEntity<byte[]> convertTextToSpeech(@RequestParam String text) throws Exception {
         byte[] audio = ttsService.convertTextToSpeech(text);
@@ -22,5 +23,4 @@ public class TtsController {
                 .header("Content-Type", "audio/mpeg")
                 .body(audio);
     }
-
 }
