@@ -22,9 +22,11 @@ import java.util.*;
 @RequiredArgsConstructor
 public class WorryService {
 
+    private final TtsService ttsService;
     private final UserService userService;
     private final GeminiService geminiService;
     private final WorryRepository worryRepository;
+    private final GcsService gcsService;
 
     /**
      * 고민 작성하기
@@ -37,6 +39,11 @@ public class WorryService {
 
         // 유저 타입 검사(청년만 고민 작성 가능)
         userService.checkIfJunior(user);
+
+        // 고민 내용을 음성 파일로 변환(TTS)
+        byte[] audioData = ttsService.convertTextToSpeech(request.getContent());
+        String uuid = gcsService.uploadAudio(audioData);
+        String audioUrl = gcsService.processFile(uuid);
 
         // WorryCategory 추출
         WorryCategory worryCategory = geminiService.analyzeWorry(request.getContent());
@@ -60,6 +67,7 @@ public class WorryService {
                 .isAnonymous(request.isAnonymous())
                 .category(worryCategory)
                 .status(WorryStatus.WAITING)
+                .audioUrl(audioUrl)
                 .matchingInfo(matchingInfo)
                 .build();
 

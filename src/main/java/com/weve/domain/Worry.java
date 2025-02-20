@@ -37,7 +37,7 @@ public class Worry extends BaseEntity {
 
     private boolean isAnonymous;
 
-    private String mp4;
+    private String audioUrl;
 
     @Embedded
     private MatchingInfo matchingInfo;
