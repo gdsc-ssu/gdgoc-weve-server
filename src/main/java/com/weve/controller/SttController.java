@@ -1,6 +1,7 @@
 package com.weve.controller;
 
 import com.weve.common.api.payload.BasicResponse;
+import com.weve.dto.response.SpeechToTextResponse;
 import com.weve.service.SttService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,10 +28,15 @@ public class SttController {
      * STT(Speech-to-Text) : 오디오 파일을 받아서 텍스트로 변환하여 반환
      */
     @PostMapping(value = "", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public BasicResponse<String> handleAudioMessage(@RequestParam MultipartFile audioFile,
-                                                    @RequestParam(defaultValue = "ios") String os) throws IOException {
+    public BasicResponse<SpeechToTextResponse> handleAudioMessage(@RequestParam MultipartFile audioFile,
+                                                                  @RequestParam(defaultValue = "ios") String os) throws IOException {
         int frequency = os.equals("android") ? 44100 : 48000; //샘플링 주파수: ios-48000, android-44100
         String transcribe = sttService.transcribe(audioFile, frequency);
-        return BasicResponse.onSuccess(transcribe);
+
+        SpeechToTextResponse response = SpeechToTextResponse.builder()
+                .text(transcribe)
+                .build();
+
+        return BasicResponse.onSuccess(response);
     }
 }
