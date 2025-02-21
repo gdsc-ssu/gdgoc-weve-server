@@ -15,4 +15,15 @@ public class GetWorryResponse {
         private String content;
         private String author;
     }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class seniorVer {
+        private String author;
+        private String nationality;
+        private String content;
+        private String audioUrl;
+    }
 }

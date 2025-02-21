@@ -12,8 +12,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
-
 @RestController
 @RequiredArgsConstructor
 @Validated
@@ -67,6 +65,8 @@ public class WorryController {
             return BasicResponse.onSuccess(response);
         } else {
             // SENIOR ver
+            GetWorryResponse.seniorVer response = worryService.getWorryForSenior(userId, worryId);
+            return BasicResponse.onSuccess(response);
         }
     }
 }
