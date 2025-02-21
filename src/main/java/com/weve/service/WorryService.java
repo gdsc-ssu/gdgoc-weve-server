@@ -200,6 +200,29 @@ public class WorryService {
                 .build();
     }
 
+    /**
+     * 고민 상세 조회(SENIOR ver)
+     */
+    public GetWorryResponse.seniorVer getWorryForSenior(Long userId, Long worryId) {
+
+        log.info("[고민 상세 조회(SENIOR ver)] userId={}, worryId={}", userId, worryId);
+
+        User user = userService.findById(userId);
+
+        // 유저 타입 검사
+        userService.checkIfSenior(user);
+
+        Worry worry = worryRepository.findById(worryId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.WORRY_NOT_FOUND));
+
+        return GetWorryResponse.seniorVer.builder()
+                .author(worry.getJunior().getName())
+                .nationality(worry.getJunior().getNationality())
+                .content(worry.getContent())
+                .audioUrl(worry.getAudioUrl())
+                .build();
+    }
+
     // 매칭 고민 목록 조회
     private List<Worry> getMatchingWorries(JobCategory job, ValueCategory value, HardshipCategory hardship, WorryCategory category) {
         // 3개 조건 모두 일치하는 Worry들
