@@ -34,39 +34,38 @@ public class WorryController {
     }
 
     /**
-     * 고민 목록 조회
+     * 고민 목록 조회(JUNIOR ver)
      */
-    @GetMapping
-    public BasicResponse<?> getWorries(@RequestHeader Long userId,
-                                       @RequestParam("usertype") String userType) {
-
-        if (userType.equals("junior")) {
-            // JUNIOR ver
-            GetWorriesResponse.juniorVer response = worryService.getWorriesForJunior(userId);
-            return BasicResponse.onSuccess(response);
-        } else {
-            // SENIOR ver
-            GetWorriesResponse.seniorVer response = worryService.getWorriesForSenior(userId);
-            return BasicResponse.onSuccess(response);
-        }
+    @GetMapping("/junior")
+    public BasicResponse<?> getWorriesForJunior(@RequestHeader Long userId) {
+        GetWorriesResponse.juniorVer response = worryService.getWorriesForJunior(userId);
+        return BasicResponse.onSuccess(response);
     }
 
     /**
-     * 고민 상세 조회
+     * 고민 목록 조회(SENIOR ver)
      */
-    @GetMapping("/{worryId}")
-    public BasicResponse<?> getWorry(@RequestHeader Long userId,
-                                       @PathVariable Long worryId,
-                                       @RequestParam("usertype") String userType) {
+    @GetMapping("/senior")
+    public BasicResponse<?> getWorriesForSenior(@RequestHeader Long userId) {
+        GetWorriesResponse.seniorVer response = worryService.getWorriesForSenior(userId);
+        return BasicResponse.onSuccess(response);
+    }
 
-        if (userType.equals("junior")) {
-            // JUNIOR ver
-            GetWorryResponse.juniorVer response = worryService.getWorryForJunior(userId, worryId);
-            return BasicResponse.onSuccess(response);
-        } else {
-            // SENIOR ver
-            GetWorryResponse.seniorVer response = worryService.getWorryForSenior(userId, worryId);
-            return BasicResponse.onSuccess(response);
-        }
+    /**
+     * 고민 상세 조회(JUNIOR ver)
+     */
+    @GetMapping("/{worryId}/junior")
+    public BasicResponse<?> getWorryForJunior(@RequestHeader Long userId, @PathVariable Long worryId) {
+        GetWorryResponse.juniorVer response = worryService.getWorryForJunior(userId, worryId);
+        return BasicResponse.onSuccess(response);
+    }
+
+    /**
+     * 고민 상세 조회(SENIOR ver)
+     */
+    @GetMapping("/{worryId}/senior")
+    public BasicResponse<?> getWorryForSenior(@RequestHeader Long userId, @PathVariable Long worryId) {
+        GetWorryResponse.seniorVer response = worryService.getWorryForSenior(userId, worryId);
+        return BasicResponse.onSuccess(response);
     }
 }
