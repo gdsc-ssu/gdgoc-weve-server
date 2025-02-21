@@ -4,6 +4,7 @@ import com.weve.common.api.payload.BasicResponse;
 import com.weve.dto.request.CreateWorryRequest;
 import com.weve.dto.response.CreateWorryResponse;
 import com.weve.dto.response.GetWorriesResponse;
+import com.weve.dto.response.GetWorryResponse;
 import com.weve.service.WorryService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -49,6 +50,23 @@ public class WorryController {
             // SENIOR ver
             GetWorriesResponse.seniorVer response = worryService.getWorriesForSenior(userId);
             return BasicResponse.onSuccess(response);
+        }
+    }
+
+    /**
+     * 고민 상세 조회
+     */
+    @GetMapping("/{worryId}")
+    public BasicResponse<?> getWorry(@RequestHeader Long userId,
+                                       @PathVariable Long worryId,
+                                       @RequestParam("usertype") String userType) {
+
+        if (userType.equals("junior")) {
+            // JUNIOR ver
+            GetWorryResponse.juniorVer response = worryService.getWorryForJunior(userId, worryId);
+            return BasicResponse.onSuccess(response);
+        } else {
+            // SENIOR ver
         }
     }
 }

@@ -1,5 +1,7 @@
 package com.weve.service;
 
+import com.weve.common.api.exception.GeneralException;
+import com.weve.common.api.payload.code.status.ErrorStatus;
 import com.weve.domain.MatchingInfo;
 import com.weve.domain.User;
 import com.weve.domain.Worry;
@@ -8,12 +10,15 @@ import com.weve.dto.gemini.ExtractedCategoriesFromText;
 import com.weve.dto.request.CreateWorryRequest;
 import com.weve.dto.response.CreateWorryResponse;
 import com.weve.dto.response.GetWorriesResponse;
+import com.weve.dto.response.GetWorryResponse;
 import com.weve.repository.WorryRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.Period;
 import java.util.*;
 
 @Slf4j
@@ -165,6 +170,33 @@ public class WorryService {
 
         return GetWorriesResponse.seniorVer.builder()
                 .worryList(worryCategoryInfo)
+                .build();
+    }
+
+    /**
+     * 고민 상세 조회(JUNIOR ver)
+     */
+    public GetWorryResponse.juniorVer getWorryForJunior(Long userId, Long worryId) {
+
+        log.info("[고민 상세 조회(JUNIOR ver)] userId={}, worryId={}", userId, worryId);
+
+        User user = userService.findById(userId);
+
+        // 유저 타입 검사
+        userService.checkIfJunior(user);
+
+        String userDescription = String.format("%s에 사는 %d세 %s",
+                user.getNationality(),
+                Period.between(user.getBirth(), LocalDate.now()).getYears(),
+                user.getName()
+        );
+
+        Worry worry = worryRepository.findById(worryId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.WORRY_NOT_FOUND));
+
+        return GetWorryResponse.juniorVer.builder()
+                .content(worry.getContent())
+                .author(userDescription)
                 .build();
     }
 
