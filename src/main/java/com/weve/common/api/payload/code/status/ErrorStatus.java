@@ -19,7 +19,10 @@ public enum ErrorStatus implements BaseErrorCode {
 
     // User
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "USER400", "존재하지 않는 유저 정보입니다."),
-    INVALID_USER_TYPE(HttpStatus.CONFLICT, "USER401", "적절하지 않은 유저 타입입니다.");
+    INVALID_USER_TYPE(HttpStatus.CONFLICT, "USER401", "적절하지 않은 유저 타입입니다."),
+
+    // Worry
+    WORRY_NOT_FOUND(HttpStatus.NOT_FOUND, "WORRY400", "존재하지 않는 고민 정보입니다.");
 
     private final HttpStatus httpStatus;
     private final String code;
