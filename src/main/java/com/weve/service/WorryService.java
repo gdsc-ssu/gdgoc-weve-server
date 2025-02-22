@@ -224,14 +224,14 @@ public class WorryService {
     // 매칭 고민 목록 조회
     private List<Worry> getMatchingWorries(JobCategory job, ValueCategory value, HardshipCategory hardship, WorryCategory category) {
         // 3개 조건 모두 일치하는 Worry들
-        List<Worry> threeMatching = worryRepository.findByMatchingInfo_JobAndMatchingInfo_ValueAndMatchingInfo_HardshipAndCategory(job, value, hardship, category);
+        List<Worry> threeMatching = worryRepository.findByMatchingInfo_JobAndMatchingInfo_ValueAndMatchingInfo_HardshipAndCategoryAndAnswerIsNull(job, value, hardship, category);
 
         // 2개 조건: job, value
-        List<Worry> twoMatching1 = worryRepository.findByMatchingInfo_JobAndMatchingInfo_ValueAndCategory(job, value, category);
+        List<Worry> twoMatching1 = worryRepository.findByMatchingInfo_JobAndMatchingInfo_ValueAndCategoryAndAnswerIsNull(job, value, category);
         // 2개 조건: job, hardship
-        List<Worry> twoMatching2 = worryRepository.findByMatchingInfo_JobAndMatchingInfo_HardshipAndCategory(job, hardship, category);
+        List<Worry> twoMatching2 = worryRepository.findByMatchingInfo_JobAndMatchingInfo_HardshipAndCategoryAndAnswerIsNull(job, hardship, category);
         // 2개 조건: value, hardship
-        List<Worry> twoMatching3 = worryRepository.findByMatchingInfo_ValueAndMatchingInfo_HardshipAndCategory(value, hardship, category);
+        List<Worry> twoMatching3 = worryRepository.findByMatchingInfo_ValueAndMatchingInfo_HardshipAndCategoryAndAnswerIsNull(value, hardship, category);
         // 2개 조건 결합(Set으로 중복 제거)
         Set<Worry> twoMatching = new HashSet<>();
         twoMatching.addAll(twoMatching1);
@@ -239,11 +239,11 @@ public class WorryService {
         twoMatching.addAll(twoMatching3);
 
         // 1개 조건: job
-        List<Worry> oneMatching1 = worryRepository.findByMatchingInfo_JobAndCategory(job, category);
+        List<Worry> oneMatching1 = worryRepository.findByMatchingInfo_JobAndCategoryAndAnswerIsNull(job, category);
         // 1개 조건: value
-        List<Worry> oneMatching2 = worryRepository.findByMatchingInfo_ValueAndCategory(value, category);
+        List<Worry> oneMatching2 = worryRepository.findByMatchingInfo_ValueAndCategoryAndAnswerIsNull(value, category);
         // 1개 조건: hardship
-        List<Worry> oneMatching3 = worryRepository.findByMatchingInfo_HardshipAndCategory(hardship, category);
+        List<Worry> oneMatching3 = worryRepository.findByMatchingInfo_HardshipAndCategoryAndAnswerIsNull(hardship, category);
         // 1개 조건 결합(Set으로 중복 제거)
         Set<Worry> oneMatching = new HashSet<>();
         oneMatching.addAll(oneMatching1);
@@ -251,7 +251,7 @@ public class WorryService {
         oneMatching.addAll(oneMatching3);
 
         // 0개 조건
-        List<Worry> zeroMatching = worryRepository.findByCategory(category);
+        List<Worry> zeroMatching = worryRepository.findByCategoryAndAnswerIsNull(category);
 
         // 랜덤으로 3개 뽑기
         Random random = new Random();
