@@ -18,5 +18,7 @@ public class Appreciate extends BaseEntity {
     @JoinColumn(name = "worry_id", nullable = false)
     private Worry worry;
 
+    private String audioUrl;
+
     private boolean isRead;
 }
