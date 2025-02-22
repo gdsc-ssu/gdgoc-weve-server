@@ -24,5 +24,7 @@ public class Answer extends BaseEntity {
 
     private String answer;
 
-    private String letterImageUrl;
+    private String imageUrl;
+
+    private String audioUrl;
 }

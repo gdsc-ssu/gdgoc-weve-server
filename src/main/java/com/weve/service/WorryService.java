@@ -191,8 +191,7 @@ public class WorryService {
                 user.getName()
         );
 
-        Worry worry = worryRepository.findById(worryId)
-                .orElseThrow(() -> new GeneralException(ErrorStatus.WORRY_NOT_FOUND));
+        Worry worry = findById(worryId);
 
         return GetWorryResponse.juniorVer.builder()
                 .content(worry.getContent())
@@ -212,8 +211,7 @@ public class WorryService {
         // 유저 타입 검사
         userService.checkIfSenior(user);
 
-        Worry worry = worryRepository.findById(worryId)
-                .orElseThrow(() -> new GeneralException(ErrorStatus.WORRY_NOT_FOUND));
+        Worry worry = findById(worryId);
 
         return GetWorryResponse.seniorVer.builder()
                 .author(worry.getJunior().getName())
@@ -318,5 +316,11 @@ public class WorryService {
                 category, selectedFromThree, selectedFromTwo, selectedFromOne, selectedFromZero);
 
         return responseList;
+    }
+
+    // id로 Worry 검색
+    public Worry findById(Long worryId) {
+        return worryRepository.findById(worryId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.WORRY_NOT_FOUND));
     }
 }
