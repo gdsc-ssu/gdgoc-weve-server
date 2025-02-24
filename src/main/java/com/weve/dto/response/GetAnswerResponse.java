@@ -18,4 +18,15 @@ public class GetAnswerResponse {
         private String author;
         private String imageUrl;
     }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    public static class seniorVer {
+        private String content;
+        private String audioUrl;
+        private String imageUrl;
+    }
 }
