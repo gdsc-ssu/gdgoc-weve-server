@@ -2,6 +2,7 @@ package com.weve.service;
 
 import com.weve.common.api.exception.GeneralException;
 import com.weve.common.api.payload.code.status.ErrorStatus;
+import com.weve.domain.Answer;
 import com.weve.domain.MatchingInfo;
 import com.weve.domain.User;
 import com.weve.domain.Worry;
@@ -9,6 +10,7 @@ import com.weve.domain.enums.*;
 import com.weve.dto.gemini.ExtractedCategoriesFromText;
 import com.weve.dto.request.CreateWorryRequest;
 import com.weve.dto.response.CreateWorryResponse;
+import com.weve.dto.response.GetAnswerResponse;
 import com.weve.dto.response.GetWorriesResponse;
 import com.weve.dto.response.GetWorryResponse;
 import com.weve.repository.WorryRepository;
@@ -185,11 +187,7 @@ public class WorryService {
         // 유저 타입 검사
         userService.checkIfJunior(user);
 
-        String userDescription = String.format("%s에 사는 %d세 %s",
-                user.getNationality(),
-                Period.between(user.getBirth(), LocalDate.now()).getYears(),
-                user.getName()
-        );
+        String userDescription = makeAuthorName(user);
 
         Worry worry = findById(worryId);
 
@@ -218,6 +216,41 @@ public class WorryService {
                 .nationality(worry.getJunior().getNationality())
                 .content(worry.getContent())
                 .audioUrl(worry.getAudioUrl())
+                .build();
+    }
+
+    /**
+     * 답변 상세 조회(JUNIOR ver)
+     */
+    public GetAnswerResponse.juniorVer getAnswerForJunior(Long userId, Long worryId) {
+
+        log.info("[답변 상세 조회(JUNIOR ver)] userId={}, worryId={}", userId, worryId);
+
+        User user = userService.findById(userId);
+
+        // 유저 타입 검사
+        userService.checkIfJunior(user);
+
+        String userDescription = makeAuthorName(user);
+
+        Worry worry = findById(worryId);
+
+        // 본인 고민이 아닌 경우, 에러 반환
+        if(worry.getJunior() != user) {
+            throw new GeneralException(ErrorStatus.WORRY_NOT_MINE);
+        }
+
+        // 미답변 고민일 경우, 에러 반환
+        if(worry.getAnswer() == null) {
+            throw new GeneralException(ErrorStatus.WORRY_UNANSWERED);
+        }
+
+        Answer answer = worry.getAnswer();
+
+        return GetAnswerResponse.juniorVer.builder()
+                .content(answer.getContent())
+                .author(userDescription)
+                .imageUrl(answer.getImageUrl())
                 .build();
     }
 
@@ -316,6 +349,15 @@ public class WorryService {
                 category, selectedFromThree, selectedFromTwo, selectedFromOne, selectedFromZero);
 
         return responseList;
+    }
+
+    // 작성자 소개란 생성
+    private String makeAuthorName(User user) {
+        return String.format("%s에 사는 %d세 %s",
+                user.getNationality(),
+                Period.between(user.getBirth(), LocalDate.now()).getYears(),
+                user.getName()
+        );
     }
 
     // id로 Worry 검색
