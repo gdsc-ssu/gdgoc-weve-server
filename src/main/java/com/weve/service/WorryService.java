@@ -231,8 +231,6 @@ public class WorryService {
         // 유저 타입 검사
         userService.checkIfJunior(user);
 
-        String userDescription = makeAuthorName(user);
-
         Worry worry = findById(worryId);
 
         // 본인 고민이 아닌 경우, 에러 반환
@@ -246,6 +244,7 @@ public class WorryService {
         }
 
         Answer answer = worry.getAnswer();
+        String userDescription = makeAuthorName(answer.getSenior());
 
         return GetAnswerResponse.juniorVer.builder()
                 .content(answer.getContent())
