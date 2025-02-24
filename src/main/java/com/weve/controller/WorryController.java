@@ -1,10 +1,12 @@
 package com.weve.controller;
 
 import com.weve.common.api.payload.BasicResponse;
+import com.weve.dto.request.CreateAnswerRequest;
 import com.weve.dto.request.CreateWorryRequest;
 import com.weve.dto.response.CreateWorryResponse;
 import com.weve.dto.response.GetWorriesResponse;
 import com.weve.dto.response.GetWorryResponse;
+import com.weve.service.AnswerService;
 import com.weve.service.WorryService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 public class WorryController {
 
     private final WorryService worryService;
+    private final AnswerService answerService;
 
     /**
      * 고민 작성하기
@@ -67,5 +70,18 @@ public class WorryController {
     public BasicResponse<?> getWorryForSenior(@RequestHeader Long userId, @PathVariable Long worryId) {
         GetWorryResponse.seniorVer response = worryService.getWorryForSenior(userId, worryId);
         return BasicResponse.onSuccess(response);
+    }
+
+    /**
+     * 답변 작성하기
+     */
+    @PostMapping("/{worryId}/answer")
+    public BasicResponse<?> createAnswer(@RequestHeader Long userId,
+                                                            @PathVariable Long worryId,
+                                                            @RequestBody @Valid CreateAnswerRequest request) {
+
+        answerService.createAnswer(userId, worryId, request);
+
+        return BasicResponse.onSuccess(null);
     }
 }
