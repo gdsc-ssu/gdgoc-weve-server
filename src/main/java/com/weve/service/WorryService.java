@@ -253,6 +253,40 @@ public class WorryService {
                 .build();
     }
 
+    /**
+     * 답변 상세 조회(SENIOR ver)
+     */
+    public GetAnswerResponse.seniorVer getAnswerForSenior(Long userId, Long worryId) {
+
+        log.info("[답변 상세 조회(SENIOR ver)] userId={}, worryId={}", userId, worryId);
+
+        User user = userService.findById(userId);
+
+        // 유저 타입 검사
+        userService.checkIfSenior(user);
+
+        Worry worry = findById(worryId);
+
+        // 미답변 고민일 경우, 에러 반환
+        if(worry.getAnswer() == null) {
+            throw new GeneralException(ErrorStatus.WORRY_UNANSWERED);
+        }
+
+        Answer answer = worry.getAnswer();
+
+        // 본인 답변이 아닌 경우, 에러 반환
+        if(answer.getSenior() != user) {
+            throw new GeneralException(ErrorStatus.ANSWER_NOT_MINE);
+        }
+
+        return GetAnswerResponse.seniorVer.builder()
+                .content(answer.getContent())
+                .audioUrl(answer.getAudioUrl())
+                .imageUrl(answer.getImageUrl())
+                .build();
+    }
+
+
     // 매칭 고민 목록 조회
     private List<Worry> getMatchingWorries(JobCategory job, ValueCategory value, HardshipCategory hardship, WorryCategory category) {
         // 3개 조건 모두 일치하는 Worry들

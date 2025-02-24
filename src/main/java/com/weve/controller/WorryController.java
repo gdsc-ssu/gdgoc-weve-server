@@ -94,4 +94,13 @@ public class WorryController {
         GetAnswerResponse.juniorVer response = worryService.getAnswerForJunior(userId, worryId);
         return BasicResponse.onSuccess(response);
     }
+
+    /**
+     * 답변 상세 조회(SENIOR ver)
+     */
+    @GetMapping("/{worryId}/answer/senior")
+    public BasicResponse<GetAnswerResponse.seniorVer> getAnswerForSenior(@RequestHeader Long userId, @PathVariable Long worryId) {
+        GetAnswerResponse.seniorVer response = worryService.getAnswerForSenior(userId, worryId);
+        return BasicResponse.onSuccess(response);
+    }
 }
