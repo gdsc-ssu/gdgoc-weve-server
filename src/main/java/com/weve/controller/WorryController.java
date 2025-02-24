@@ -4,6 +4,7 @@ import com.weve.common.api.payload.BasicResponse;
 import com.weve.dto.request.CreateAnswerRequest;
 import com.weve.dto.request.CreateWorryRequest;
 import com.weve.dto.response.CreateWorryResponse;
+import com.weve.dto.response.GetAnswerResponse;
 import com.weve.dto.response.GetWorriesResponse;
 import com.weve.dto.response.GetWorryResponse;
 import com.weve.service.AnswerService;
@@ -58,7 +59,7 @@ public class WorryController {
      * 고민 상세 조회(JUNIOR ver)
      */
     @GetMapping("/{worryId}/junior")
-    public BasicResponse<?> getWorryForJunior(@RequestHeader Long userId, @PathVariable Long worryId) {
+    public BasicResponse<GetWorryResponse.juniorVer> getWorryForJunior(@RequestHeader Long userId, @PathVariable Long worryId) {
         GetWorryResponse.juniorVer response = worryService.getWorryForJunior(userId, worryId);
         return BasicResponse.onSuccess(response);
     }
@@ -67,7 +68,7 @@ public class WorryController {
      * 고민 상세 조회(SENIOR ver)
      */
     @GetMapping("/{worryId}/senior")
-    public BasicResponse<?> getWorryForSenior(@RequestHeader Long userId, @PathVariable Long worryId) {
+    public BasicResponse<GetWorryResponse.seniorVer> getWorryForSenior(@RequestHeader Long userId, @PathVariable Long worryId) {
         GetWorryResponse.seniorVer response = worryService.getWorryForSenior(userId, worryId);
         return BasicResponse.onSuccess(response);
     }
@@ -83,5 +84,23 @@ public class WorryController {
         answerService.createAnswer(userId, worryId, request);
 
         return BasicResponse.onSuccess(null);
+    }
+
+    /**
+     * 답변 상세 조회(JUNIOR ver)
+     */
+    @GetMapping("/{worryId}/answer/junior")
+    public BasicResponse<GetAnswerResponse.juniorVer> getAnswerForJunior(@RequestHeader Long userId, @PathVariable Long worryId) {
+        GetAnswerResponse.juniorVer response = worryService.getAnswerForJunior(userId, worryId);
+        return BasicResponse.onSuccess(response);
+    }
+
+    /**
+     * 답변 상세 조회(SENIOR ver)
+     */
+    @GetMapping("/{worryId}/answer/senior")
+    public BasicResponse<GetAnswerResponse.seniorVer> getAnswerForSenior(@RequestHeader Long userId, @PathVariable Long worryId) {
+        GetAnswerResponse.seniorVer response = worryService.getAnswerForSenior(userId, worryId);
+        return BasicResponse.onSuccess(response);
     }
 }

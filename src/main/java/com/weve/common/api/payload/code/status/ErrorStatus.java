@@ -23,7 +23,12 @@ public enum ErrorStatus implements BaseErrorCode {
 
     // Worry
     WORRY_NOT_FOUND(HttpStatus.NOT_FOUND, "WORRY400", "존재하지 않는 고민 정보입니다."),
-    WORRY_ALREADY_ANSWERED(HttpStatus.CONFLICT, "WORRY401", "이미 답변이 달린 고민입니다.");
+    WORRY_ALREADY_ANSWERED(HttpStatus.CONFLICT, "WORRY401", "이미 답변이 달린 고민입니다."),
+    WORRY_UNANSWERED(HttpStatus.NOT_FOUND, "WORRY402", "답변이 달리지 않은 고민입니다."),
+    WORRY_NOT_MINE(HttpStatus.CONFLICT, "WORRY403", "본인이 작성한 고민이 아닙니다."),
+
+    // ANSWER
+    ANSWER_NOT_MINE(HttpStatus.CONFLICT, "ANSWER400", "본인이 작성한 답변이 아닙니다.");
 
 
     private final HttpStatus httpStatus;
