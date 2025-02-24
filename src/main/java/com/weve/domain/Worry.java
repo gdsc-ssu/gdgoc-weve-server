@@ -43,9 +43,9 @@ public class Worry extends BaseEntity {
     private MatchingInfo matchingInfo;
 
     @OneToOne(mappedBy = "worry", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Answer answers;
+    private Answer answer;
 
     @OneToOne(mappedBy = "worry", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Appreciate appreciates;
+    private Appreciate appreciate;
 }
 
