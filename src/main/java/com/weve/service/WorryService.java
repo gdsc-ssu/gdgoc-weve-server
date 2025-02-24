@@ -2,17 +2,11 @@ package com.weve.service;
 
 import com.weve.common.api.exception.GeneralException;
 import com.weve.common.api.payload.code.status.ErrorStatus;
-import com.weve.domain.Answer;
-import com.weve.domain.MatchingInfo;
-import com.weve.domain.User;
-import com.weve.domain.Worry;
+import com.weve.domain.*;
 import com.weve.domain.enums.*;
 import com.weve.dto.gemini.ExtractedCategoriesFromText;
 import com.weve.dto.request.CreateWorryRequest;
-import com.weve.dto.response.CreateWorryResponse;
-import com.weve.dto.response.GetAnswerResponse;
-import com.weve.dto.response.GetWorriesResponse;
-import com.weve.dto.response.GetWorryResponse;
+import com.weve.dto.response.*;
 import com.weve.repository.WorryRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -283,6 +277,39 @@ public class WorryService {
                 .content(answer.getContent())
                 .audioUrl(answer.getAudioUrl())
                 .imageUrl(answer.getImageUrl())
+                .build();
+    }
+
+    /**
+     * 감사편지 상세 조회(JUNIOR ver)
+     */
+    public GetAppreciateResponse.juniorVer getAppreciateForJunior(Long userId, Long worryId) {
+
+        log.info("[감사편지 상세 조회(JUNIOR ver)] userId={}, worryId={}", userId, worryId);
+
+        User user = userService.findById(userId);
+
+        // 유저 타입 검사
+        userService.checkIfJunior(user);
+
+        Worry worry = findById(worryId);
+
+        // 본인 고민이 아닌 경우, 에러 반환
+        if(worry.getJunior() != user) {
+            throw new GeneralException(ErrorStatus.WORRY_NOT_MINE);
+        }
+
+        // 감사인사가 존재하지 않는 고민일 경우, 에러 반환
+        if(worry.getAppreciate() == null) {
+            throw new GeneralException(ErrorStatus.WORRY_APPRECIATE_NOT_FOUND);
+        }
+
+        Appreciate appreciate = worry.getAppreciate();
+        String userDescription = makeAuthorName(user);
+
+        return GetAppreciateResponse.juniorVer.builder()
+                .content(appreciate.getContent())
+                .author(userDescription)
                 .build();
     }
 
