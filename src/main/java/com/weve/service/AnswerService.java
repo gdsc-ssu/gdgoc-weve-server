@@ -51,7 +51,7 @@ public class AnswerService {
         Answer newAnswer = Answer.builder()
                 .senior(user)
                 .worry(worry)
-                .answer(request.getContent())
+                .content(request.getContent())
                 .imageUrl(request.getImageUrl())
                 .audioUrl(audioUrl)
                 .build();
