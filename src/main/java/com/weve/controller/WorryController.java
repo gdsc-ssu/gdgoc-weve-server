@@ -3,10 +3,7 @@ package com.weve.controller;
 import com.weve.common.api.payload.BasicResponse;
 import com.weve.dto.request.CreateAnswerRequest;
 import com.weve.dto.request.CreateWorryRequest;
-import com.weve.dto.response.CreateWorryResponse;
-import com.weve.dto.response.GetAnswerResponse;
-import com.weve.dto.response.GetWorriesResponse;
-import com.weve.dto.response.GetWorryResponse;
+import com.weve.dto.response.*;
 import com.weve.service.AnswerService;
 import com.weve.service.WorryService;
 import jakarta.validation.Valid;
@@ -101,6 +98,15 @@ public class WorryController {
     @GetMapping("/{worryId}/answer/senior")
     public BasicResponse<GetAnswerResponse.seniorVer> getAnswerForSenior(@RequestHeader Long userId, @PathVariable Long worryId) {
         GetAnswerResponse.seniorVer response = worryService.getAnswerForSenior(userId, worryId);
+        return BasicResponse.onSuccess(response);
+    }
+
+    /**
+     * 답변 상세 조회(JUNIOR ver)
+     */
+    @GetMapping("/{worryId}/appreciate/junior")
+    public BasicResponse<GetAppreciateResponse.juniorVer> getAppreciateForJunior(@RequestHeader Long userId, @PathVariable Long worryId) {
+        GetAppreciateResponse.juniorVer response = worryService.getAppreciateForJunior(userId, worryId);
         return BasicResponse.onSuccess(response);
     }
 }
