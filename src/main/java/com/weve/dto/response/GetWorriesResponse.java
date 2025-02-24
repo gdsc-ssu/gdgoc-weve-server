@@ -1,5 +1,6 @@
 package com.weve.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.weve.domain.enums.WorryStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,6 +15,7 @@ public class GetWorriesResponse {
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     public static class juniorVer {
         private List<WorryForJunior> worryList;
     }
@@ -32,6 +34,7 @@ public class GetWorriesResponse {
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     public static class seniorVer {
         private WorryCategoryInfo worryList;
     }
@@ -50,6 +53,7 @@ public class GetWorriesResponse {
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     public static class WorryForSenior {
         private Long worryId;
         private String author;

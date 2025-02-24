@@ -1,5 +1,6 @@
 package com.weve.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -11,6 +12,7 @@ public class GetWorryResponse {
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     public static class juniorVer {
         private String content;
         private String author;
@@ -20,6 +22,7 @@ public class GetWorryResponse {
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     public static class seniorVer {
         private String author;
         private String nationality;
