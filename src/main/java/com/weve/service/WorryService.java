@@ -37,10 +37,10 @@ public class WorryService {
      * 고민 작성하기
      */
     @Transactional
-    public CreateWorryResponse createWorry(Long userId, CreateWorryRequest request) {
-        log.info("[고민 작성] userId={}", userId);
+    public CreateWorryResponse createWorry(String username, CreateWorryRequest request) {
+        log.info("[고민 작성] username={}", username);
 
-        User user = userService.findById(userId);
+        User user = userService.findByPhoneNumber(username);
 
         // 유저 타입 검사(청년만 고민 작성 가능)
         userService.checkIfJunior(user);
@@ -87,11 +87,11 @@ public class WorryService {
     /**
      * 고민 목록 조회(JUNIOR ver)
      */
-    public GetWorriesResponse.juniorVer getWorriesForJunior(Long userId) {
+    public GetWorriesResponse.juniorVer getWorriesForJunior(String username) {
 
-        log.info("[고민 목록 조회(JUNIOR ver)] userId={}", userId);
+        log.info("[고민 목록 조회(JUNIOR ver)] username={}", username);
 
-        User user = userService.findById(userId);
+        User user = userService.findByPhoneNumber(username);
 
         // 유저 타입 검사
         userService.checkIfJunior(user);
@@ -112,11 +112,11 @@ public class WorryService {
     /**
      * 고민 목록 조회(SENIOR ver)
      */
-    public GetWorriesResponse.seniorVer getWorriesForSenior(Long userId) {
+    public GetWorriesResponse.seniorVer getWorriesForSenior(String username) {
 
-        log.info("[고민 목록 조회(SENIOR ver)] userId={}", userId);
+        log.info("[고민 목록 조회(SENIOR ver)] username={}", username);
 
-        User user = userService.findById(userId);
+        User user = userService.findByPhoneNumber(username);
 
         // 유저 타입 검사
         userService.checkIfSenior(user);
@@ -136,7 +136,7 @@ public class WorryService {
                 .map(worry -> {
                     return GetWorriesResponse.WorryForSenior.builder()
                             .worryId(worry.getId())
-                            .author(worry.isAnonymous() ? "위명의 위비" : worry.getJunior().getName())
+                            .author(worry.isAnonymous() ? "익명의 위비" : worry.getJunior().getName())
                             .title(worry.getTitle())
                             .build();
                 })
@@ -146,7 +146,7 @@ public class WorryService {
                 .map(worry -> {
                     return GetWorriesResponse.WorryForSenior.builder()
                             .worryId(worry.getId())
-                            .author(worry.isAnonymous() ? "위명의 위비" : worry.getJunior().getName())
+                            .author(worry.isAnonymous() ? "익명의 위비" : worry.getJunior().getName())
                             .title(worry.getTitle())
                             .build();
                 })
@@ -156,7 +156,7 @@ public class WorryService {
                 .map(worry -> {
                     return GetWorriesResponse.WorryForSenior.builder()
                             .worryId(worry.getId())
-                            .author(worry.isAnonymous() ? "위명의 위비" : worry.getJunior().getName())
+                            .author(worry.isAnonymous() ? "익명의 위비" : worry.getJunior().getName())
                             .title(worry.getTitle())
                             .build();
                 })
@@ -176,11 +176,11 @@ public class WorryService {
     /**
      * 고민 상세 조회(JUNIOR ver)
      */
-    public GetWorryResponse.juniorVer getWorryForJunior(Long userId, Long worryId) {
+    public GetWorryResponse.juniorVer getWorryForJunior(String username, Long worryId) {
 
-        log.info("[고민 상세 조회(JUNIOR ver)] userId={}, worryId={}", userId, worryId);
+        log.info("[고민 상세 조회(JUNIOR ver)] username={}, worryId={}", username, worryId);
 
-        User user = userService.findById(userId);
+        User user = userService.findByPhoneNumber(username);
 
         // 유저 타입 검사
         userService.checkIfJunior(user);
@@ -203,11 +203,11 @@ public class WorryService {
     /**
      * 고민 상세 조회(SENIOR ver)
      */
-    public GetWorryResponse.seniorVer getWorryForSenior(Long userId, Long worryId) {
+    public GetWorryResponse.seniorVer getWorryForSenior(String username, Long worryId) {
 
-        log.info("[고민 상세 조회(SENIOR ver)] userId={}, worryId={}", userId, worryId);
+        log.info("[고민 상세 조회(SENIOR ver)] username={}, worryId={}", username, worryId);
 
-        User user = userService.findById(userId);
+        User user = userService.findByPhoneNumber(username);
 
         // 유저 타입 검사
         userService.checkIfSenior(user);
