@@ -34,6 +34,7 @@ public class User extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private Language language;
 
+    @Column(nullable = false, unique = true)
     private String phoneNumber;
 
     @Enumerated(EnumType.STRING)
