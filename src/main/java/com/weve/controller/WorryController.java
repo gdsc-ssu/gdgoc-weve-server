@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @Validated
 @Slf4j
-@RequestMapping("/worries")
+@RequestMapping("/api/worries")
 public class WorryController {
 
     private final WorryService worryService;

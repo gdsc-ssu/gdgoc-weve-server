@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/tts")
+@RequestMapping("/api/tts")
 @RequiredArgsConstructor
 public class TtsController {
 
