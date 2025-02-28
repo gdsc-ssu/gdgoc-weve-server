@@ -39,4 +39,9 @@ public class UserService {
             throw new GeneralException(ErrorStatus.INVALID_USER_TYPE);
         }
     }
+
+    // 마이페이지 정보 조회
+    public void getMypage(String username) {
+
+    }
 }
