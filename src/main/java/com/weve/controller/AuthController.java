@@ -28,7 +28,8 @@ public class AuthController {
                 request.getName(),
                 request.getPhoneNumber(),
                 request.getBirth(),
-                request.getUserType()
+                request.getUserType(),
+                request.getLanguage()
         );
 
         if (success) {
