@@ -216,11 +216,11 @@ public class WorryService {
     /**
      * 답변 상세 조회(JUNIOR ver)
      */
-    public GetAnswerResponse.juniorVer getAnswerForJunior(Long userId, Long worryId) {
+    public GetAnswerResponse.juniorVer getAnswerForJunior(String username, Long worryId) {
 
-        log.info("[답변 상세 조회(JUNIOR ver)] userId={}, worryId={}", userId, worryId);
+        log.info("[답변 상세 조회(JUNIOR ver)] username={}, worryId={}", username, worryId);
 
-        User user = userService.findById(userId);
+        User user = userService.findByPhoneNumber(username);
 
         // 유저 타입 검사
         userService.checkIfJunior(user);
@@ -250,11 +250,11 @@ public class WorryService {
     /**
      * 답변 상세 조회(SENIOR ver)
      */
-    public GetAnswerResponse.seniorVer getAnswerForSenior(Long userId, Long worryId) {
+    public GetAnswerResponse.seniorVer getAnswerForSenior(String username, Long worryId) {
 
-        log.info("[답변 상세 조회(SENIOR ver)] userId={}, worryId={}", userId, worryId);
+        log.info("[답변 상세 조회(SENIOR ver)] username={}, worryId={}", username, worryId);
 
-        User user = userService.findById(userId);
+        User user = userService.findByPhoneNumber(username);
 
         // 유저 타입 검사
         userService.checkIfSenior(user);
@@ -283,11 +283,11 @@ public class WorryService {
     /**
      * 감사편지 상세 조회(JUNIOR ver)
      */
-    public GetAppreciateResponse.juniorVer getAppreciateForJunior(Long userId, Long worryId) {
+    public GetAppreciateResponse.juniorVer getAppreciateForJunior(String username, Long worryId) {
 
-        log.info("[감사편지 상세 조회(JUNIOR ver)] userId={}, worryId={}", userId, worryId);
+        log.info("[감사편지 상세 조회(JUNIOR ver)] username={}, worryId={}", username, worryId);
 
-        User user = userService.findById(userId);
+        User user = userService.findByPhoneNumber(username);
 
         // 유저 타입 검사
         userService.checkIfJunior(user);
