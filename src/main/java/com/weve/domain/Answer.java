@@ -22,7 +22,9 @@ public class Answer extends BaseEntity {
     @JoinColumn(name = "worry_id", nullable = false)
     private Worry worry;
 
-    private String answer;
+    private String content;
 
-    private String letterImageUrl;
+    private String imageUrl;
+
+    private String audioUrl;
 }

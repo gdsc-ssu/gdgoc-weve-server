@@ -2,15 +2,11 @@ package com.weve.service;
 
 import com.weve.common.api.exception.GeneralException;
 import com.weve.common.api.payload.code.status.ErrorStatus;
-import com.weve.domain.MatchingInfo;
-import com.weve.domain.User;
-import com.weve.domain.Worry;
+import com.weve.domain.*;
 import com.weve.domain.enums.*;
 import com.weve.dto.gemini.ExtractedCategoriesFromText;
 import com.weve.dto.request.CreateWorryRequest;
-import com.weve.dto.response.CreateWorryResponse;
-import com.weve.dto.response.GetWorriesResponse;
-import com.weve.dto.response.GetWorryResponse;
+import com.weve.dto.response.*;
 import com.weve.repository.WorryRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -185,14 +181,9 @@ public class WorryService {
         // 유저 타입 검사
         userService.checkIfJunior(user);
 
-        String userDescription = String.format("%s에 사는 %d세 %s",
-                user.getNationality(),
-                Period.between(user.getBirth(), LocalDate.now()).getYears(),
-                user.getName()
-        );
+        String userDescription = makeAuthorName(user);
 
-        Worry worry = worryRepository.findById(worryId)
-                .orElseThrow(() -> new GeneralException(ErrorStatus.WORRY_NOT_FOUND));
+        Worry worry = findById(worryId);
 
         return GetWorryResponse.juniorVer.builder()
                 .content(worry.getContent())
@@ -212,8 +203,7 @@ public class WorryService {
         // 유저 타입 검사
         userService.checkIfSenior(user);
 
-        Worry worry = worryRepository.findById(worryId)
-                .orElseThrow(() -> new GeneralException(ErrorStatus.WORRY_NOT_FOUND));
+        Worry worry = findById(worryId);
 
         return GetWorryResponse.seniorVer.builder()
                 .author(worry.getJunior().getName())
@@ -223,17 +213,118 @@ public class WorryService {
                 .build();
     }
 
+    /**
+     * 답변 상세 조회(JUNIOR ver)
+     */
+    public GetAnswerResponse.juniorVer getAnswerForJunior(Long userId, Long worryId) {
+
+        log.info("[답변 상세 조회(JUNIOR ver)] userId={}, worryId={}", userId, worryId);
+
+        User user = userService.findById(userId);
+
+        // 유저 타입 검사
+        userService.checkIfJunior(user);
+
+        Worry worry = findById(worryId);
+
+        // 본인 고민이 아닌 경우, 에러 반환
+        if(worry.getJunior() != user) {
+            throw new GeneralException(ErrorStatus.WORRY_NOT_MINE);
+        }
+
+        // 미답변 고민일 경우, 에러 반환
+        if(worry.getAnswer() == null) {
+            throw new GeneralException(ErrorStatus.WORRY_UNANSWERED);
+        }
+
+        Answer answer = worry.getAnswer();
+        String userDescription = makeAuthorName(answer.getSenior());
+
+        return GetAnswerResponse.juniorVer.builder()
+                .content(answer.getContent())
+                .author(userDescription)
+                .imageUrl(answer.getImageUrl())
+                .build();
+    }
+
+    /**
+     * 답변 상세 조회(SENIOR ver)
+     */
+    public GetAnswerResponse.seniorVer getAnswerForSenior(Long userId, Long worryId) {
+
+        log.info("[답변 상세 조회(SENIOR ver)] userId={}, worryId={}", userId, worryId);
+
+        User user = userService.findById(userId);
+
+        // 유저 타입 검사
+        userService.checkIfSenior(user);
+
+        Worry worry = findById(worryId);
+
+        // 미답변 고민일 경우, 에러 반환
+        if(worry.getAnswer() == null) {
+            throw new GeneralException(ErrorStatus.WORRY_UNANSWERED);
+        }
+
+        Answer answer = worry.getAnswer();
+
+        // 본인 답변이 아닌 경우, 에러 반환
+        if(answer.getSenior() != user) {
+            throw new GeneralException(ErrorStatus.ANSWER_NOT_MINE);
+        }
+
+        return GetAnswerResponse.seniorVer.builder()
+                .content(answer.getContent())
+                .audioUrl(answer.getAudioUrl())
+                .imageUrl(answer.getImageUrl())
+                .build();
+    }
+
+    /**
+     * 감사편지 상세 조회(JUNIOR ver)
+     */
+    public GetAppreciateResponse.juniorVer getAppreciateForJunior(Long userId, Long worryId) {
+
+        log.info("[감사편지 상세 조회(JUNIOR ver)] userId={}, worryId={}", userId, worryId);
+
+        User user = userService.findById(userId);
+
+        // 유저 타입 검사
+        userService.checkIfJunior(user);
+
+        Worry worry = findById(worryId);
+
+        // 본인 고민이 아닌 경우, 에러 반환
+        if(worry.getJunior() != user) {
+            throw new GeneralException(ErrorStatus.WORRY_NOT_MINE);
+        }
+
+        // 감사인사가 존재하지 않는 고민일 경우, 에러 반환
+        if(worry.getAppreciate() == null) {
+            throw new GeneralException(ErrorStatus.WORRY_APPRECIATE_NOT_FOUND);
+        }
+
+        Appreciate appreciate = worry.getAppreciate();
+        String userDescription = makeAuthorName(user);
+
+        return GetAppreciateResponse.juniorVer.builder()
+                .content(appreciate.getContent())
+                .author(userDescription)
+                .build();
+    }
+
+
     // 매칭 고민 목록 조회
     private List<Worry> getMatchingWorries(JobCategory job, ValueCategory value, HardshipCategory hardship, WorryCategory category) {
         // 3개 조건 모두 일치하는 Worry들
-        List<Worry> threeMatching = worryRepository.findByMatchingInfo_JobAndMatchingInfo_ValueAndMatchingInfo_HardshipAndCategory(job, value, hardship, category);
+        List<Worry> threeMatching = worryRepository.findByMatchingInfo_JobAndMatchingInfo_ValueAndMatchingInfo_HardshipAndCategoryAndAnswerIsNull(job, value, hardship, category);
 
         // 2개 조건: job, value
-        List<Worry> twoMatching1 = worryRepository.findByMatchingInfo_JobAndMatchingInfo_ValueAndCategory(job, value, category);
+        List<Worry> twoMatching1 = worryRepository.findByMatchingInfo_JobAndMatchingInfo_ValueAndCategoryAndAnswerIsNull(job, value, category);
         // 2개 조건: job, hardship
-        List<Worry> twoMatching2 = worryRepository.findByMatchingInfo_JobAndMatchingInfo_HardshipAndCategory(job, hardship, category);
+        List<Worry> twoMatching2 = worryRepository.findByMatchingInfo_JobAndMatchingInfo_HardshipAndCategoryAndAnswerIsNull(job, hardship, category);
         // 2개 조건: value, hardship
-        List<Worry> twoMatching3 = worryRepository.findByMatchingInfo_ValueAndMatchingInfo_HardshipAndCategory(value, hardship, category);
+        List<Worry> twoMatching3 = worryRepository.findByMatchingInfo_ValueAndMatchingInfo_HardshipAndCategoryAndAnswerIsNull(value, hardship, category);
         // 2개 조건 결합(Set으로 중복 제거)
         Set<Worry> twoMatching = new HashSet<>();
         twoMatching.addAll(twoMatching1);
@@ -241,11 +332,11 @@ public class WorryService {
         twoMatching.addAll(twoMatching3);
 
         // 1개 조건: job
-        List<Worry> oneMatching1 = worryRepository.findByMatchingInfo_JobAndCategory(job, category);
+        List<Worry> oneMatching1 = worryRepository.findByMatchingInfo_JobAndCategoryAndAnswerIsNull(job, category);
         // 1개 조건: value
-        List<Worry> oneMatching2 = worryRepository.findByMatchingInfo_ValueAndCategory(value, category);
+        List<Worry> oneMatching2 = worryRepository.findByMatchingInfo_ValueAndCategoryAndAnswerIsNull(value, category);
         // 1개 조건: hardship
-        List<Worry> oneMatching3 = worryRepository.findByMatchingInfo_HardshipAndCategory(hardship, category);
+        List<Worry> oneMatching3 = worryRepository.findByMatchingInfo_HardshipAndCategoryAndAnswerIsNull(hardship, category);
         // 1개 조건 결합(Set으로 중복 제거)
         Set<Worry> oneMatching = new HashSet<>();
         oneMatching.addAll(oneMatching1);
@@ -253,7 +344,7 @@ public class WorryService {
         oneMatching.addAll(oneMatching3);
 
         // 0개 조건
-        List<Worry> zeroMatching = worryRepository.findByCategory(category);
+        List<Worry> zeroMatching = worryRepository.findByCategoryAndAnswerIsNull(category);
 
         // 랜덤으로 3개 뽑기
         Random random = new Random();
@@ -318,5 +409,20 @@ public class WorryService {
                 category, selectedFromThree, selectedFromTwo, selectedFromOne, selectedFromZero);
 
         return responseList;
+    }
+
+    // 작성자 소개란 생성
+    private String makeAuthorName(User user) {
+        return String.format("%s에 사는 %d세 %s",
+                user.getNationality(),
+                Period.between(user.getBirth(), LocalDate.now()).getYears(),
+                user.getName()
+        );
+    }
+
+    // id로 Worry 검색
+    public Worry findById(Long worryId) {
+        return worryRepository.findById(worryId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.WORRY_NOT_FOUND));
     }
 }
