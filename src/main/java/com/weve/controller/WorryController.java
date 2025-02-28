@@ -9,6 +9,8 @@ import com.weve.service.WorryService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @Validated
 @Slf4j
-@RequestMapping("/worries")
+@RequestMapping("/api/worries")
 public class WorryController {
 
     private final WorryService worryService;
@@ -26,10 +28,11 @@ public class WorryController {
      * 고민 작성하기
      */
     @PostMapping
-    public BasicResponse<CreateWorryResponse> createWorry(@RequestHeader Long userId,
+    public BasicResponse<CreateWorryResponse> createWorry(@AuthenticationPrincipal UserDetails userDetails,
                                                           @RequestBody @Valid CreateWorryRequest request) {
 
-        CreateWorryResponse response = worryService.createWorry(userId, request);
+        String username = userDetails.getUsername();
+        CreateWorryResponse response = worryService.createWorry(username, request);
 
         return BasicResponse.onSuccess(response);
     }
@@ -38,8 +41,9 @@ public class WorryController {
      * 고민 목록 조회(JUNIOR ver)
      */
     @GetMapping("/junior")
-    public BasicResponse<?> getWorriesForJunior(@RequestHeader Long userId) {
-        GetWorriesResponse.juniorVer response = worryService.getWorriesForJunior(userId);
+    public BasicResponse<GetWorriesResponse.juniorVer> getWorriesForJunior(@AuthenticationPrincipal UserDetails userDetails) {
+        String username = userDetails.getUsername();
+        GetWorriesResponse.juniorVer response = worryService.getWorriesForJunior(username);
         return BasicResponse.onSuccess(response);
     }
 
@@ -47,8 +51,9 @@ public class WorryController {
      * 고민 목록 조회(SENIOR ver)
      */
     @GetMapping("/senior")
-    public BasicResponse<?> getWorriesForSenior(@RequestHeader Long userId) {
-        GetWorriesResponse.seniorVer response = worryService.getWorriesForSenior(userId);
+    public BasicResponse<GetWorriesResponse.seniorVer> getWorriesForSenior(@AuthenticationPrincipal UserDetails userDetails) {
+        String username = userDetails.getUsername();
+        GetWorriesResponse.seniorVer response = worryService.getWorriesForSenior(username);
         return BasicResponse.onSuccess(response);
     }
 
@@ -56,8 +61,10 @@ public class WorryController {
      * 고민 상세 조회(JUNIOR ver)
      */
     @GetMapping("/{worryId}/junior")
-    public BasicResponse<GetWorryResponse.juniorVer> getWorryForJunior(@RequestHeader Long userId, @PathVariable Long worryId) {
-        GetWorryResponse.juniorVer response = worryService.getWorryForJunior(userId, worryId);
+    public BasicResponse<GetWorryResponse.juniorVer> getWorryForJunior(@AuthenticationPrincipal UserDetails userDetails,
+                                                                       @PathVariable Long worryId) {
+        String username = userDetails.getUsername();
+        GetWorryResponse.juniorVer response = worryService.getWorryForJunior(username, worryId);
         return BasicResponse.onSuccess(response);
     }
 
@@ -65,8 +72,10 @@ public class WorryController {
      * 고민 상세 조회(SENIOR ver)
      */
     @GetMapping("/{worryId}/senior")
-    public BasicResponse<GetWorryResponse.seniorVer> getWorryForSenior(@RequestHeader Long userId, @PathVariable Long worryId) {
-        GetWorryResponse.seniorVer response = worryService.getWorryForSenior(userId, worryId);
+    public BasicResponse<GetWorryResponse.seniorVer> getWorryForSenior(@AuthenticationPrincipal UserDetails userDetails,
+                                                                       @PathVariable Long worryId) {
+        String username = userDetails.getUsername();
+        GetWorryResponse.seniorVer response = worryService.getWorryForSenior(username, worryId);
         return BasicResponse.onSuccess(response);
     }
 
@@ -74,11 +83,12 @@ public class WorryController {
      * 답변 작성하기
      */
     @PostMapping("/{worryId}/answer")
-    public BasicResponse<?> createAnswer(@RequestHeader Long userId,
-                                                            @PathVariable Long worryId,
-                                                            @RequestBody @Valid CreateAnswerRequest request) {
+    public BasicResponse<?> createAnswer(@AuthenticationPrincipal UserDetails userDetails,
+                                         @PathVariable Long worryId,
+                                         @RequestBody @Valid CreateAnswerRequest request) {
 
-        answerService.createAnswer(userId, worryId, request);
+        String username = userDetails.getUsername();
+        answerService.createAnswer(username, worryId, request);
 
         return BasicResponse.onSuccess(null);
     }
@@ -87,8 +97,10 @@ public class WorryController {
      * 답변 상세 조회(JUNIOR ver)
      */
     @GetMapping("/{worryId}/answer/junior")
-    public BasicResponse<GetAnswerResponse.juniorVer> getAnswerForJunior(@RequestHeader Long userId, @PathVariable Long worryId) {
-        GetAnswerResponse.juniorVer response = worryService.getAnswerForJunior(userId, worryId);
+    public BasicResponse<GetAnswerResponse.juniorVer> getAnswerForJunior(@AuthenticationPrincipal UserDetails userDetails,
+                                                                         @PathVariable Long worryId) {
+        String username = userDetails.getUsername();
+        GetAnswerResponse.juniorVer response = worryService.getAnswerForJunior(username, worryId);
         return BasicResponse.onSuccess(response);
     }
 
@@ -96,17 +108,21 @@ public class WorryController {
      * 답변 상세 조회(SENIOR ver)
      */
     @GetMapping("/{worryId}/answer/senior")
-    public BasicResponse<GetAnswerResponse.seniorVer> getAnswerForSenior(@RequestHeader Long userId, @PathVariable Long worryId) {
-        GetAnswerResponse.seniorVer response = worryService.getAnswerForSenior(userId, worryId);
+    public BasicResponse<GetAnswerResponse.seniorVer> getAnswerForSenior(@AuthenticationPrincipal UserDetails userDetails,
+                                                                         @PathVariable Long worryId) {
+        String username = userDetails.getUsername();
+        GetAnswerResponse.seniorVer response = worryService.getAnswerForSenior(username, worryId);
         return BasicResponse.onSuccess(response);
     }
 
     /**
-     * 답변 상세 조회(JUNIOR ver)
+     * 감사편지 상세 조회(JUNIOR ver)
      */
     @GetMapping("/{worryId}/appreciate/junior")
-    public BasicResponse<GetAppreciateResponse.juniorVer> getAppreciateForJunior(@RequestHeader Long userId, @PathVariable Long worryId) {
-        GetAppreciateResponse.juniorVer response = worryService.getAppreciateForJunior(userId, worryId);
+    public BasicResponse<GetAppreciateResponse.juniorVer> getAppreciateForJunior(@AuthenticationPrincipal UserDetails userDetails,
+                                                                                 @PathVariable Long worryId) {
+        String username = userDetails.getUsername();
+        GetAppreciateResponse.juniorVer response = worryService.getAppreciateForJunior(username, worryId);
         return BasicResponse.onSuccess(response);
     }
 }
