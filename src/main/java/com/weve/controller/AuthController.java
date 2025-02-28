@@ -53,7 +53,7 @@ public class AuthController {
         String token = authService.login(request.getPhoneNumber(), request.getName());
 
         if (token == null) {
-            return BasicResponse.onFailure(ErrorStatus.USER_NOT_FOUND.getCode(), "등록되지 않은 전화번호입니다.", null);
+            return BasicResponse.onFailure(ErrorStatus.USER_NOT_FOUND.getCode(), "등록되지 않은 사용자입니다.", null);
         }
 
         return BasicResponse.onSuccess(token);
