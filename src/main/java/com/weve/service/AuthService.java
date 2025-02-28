@@ -39,8 +39,9 @@ public class AuthService {
     }
 
     // 로그인
-    public String login(String phoneNumber) {
+    public String login(String phoneNumber, String name) {
         return userRepository.findByPhoneNumber(phoneNumber)
+                .filter(user -> user.getName().equals(name)) // 이름 검증 추가
                 .map(user -> jwtUtil.generateToken(user.getPhoneNumber()))
                 .orElse(null);
     }
