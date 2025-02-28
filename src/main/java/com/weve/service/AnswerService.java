@@ -28,10 +28,10 @@ public class AnswerService {
      * 답변 작성하기
      */
     @Transactional
-    public void createAnswer(Long userId, Long worryId, CreateAnswerRequest request) {
-        log.info("[답변 작성] userId={}, worryId={}", userId, worryId);
+    public void createAnswer(String username, Long worryId, CreateAnswerRequest request) {
+        log.info("[답변 작성] username={}, worryId={}", username, worryId);
 
-        User user = userService.findById(userId);
+        User user = userService.findByPhoneNumber(username);
         Worry worry = worryService.findById(worryId);
 
         // 이미 답변이 달린 고민일 경우, 에러 반환
