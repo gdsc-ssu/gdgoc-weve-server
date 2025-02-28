@@ -26,6 +26,12 @@ public class UserService {
                 .orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
     }
 
+    // 전화번호로 유저 검색
+    public User findByPhoneNumber(String phoneNumber) {
+        return userRepository.findByPhoneNumber(phoneNumber)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
+    }
+
     // 주니어인지 검사
     public void checkIfJunior(User user) {
         if(user.getUserType() != JUNIOR) {
