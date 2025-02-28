@@ -41,7 +41,7 @@ public class WorryController {
      * 고민 목록 조회(JUNIOR ver)
      */
     @GetMapping("/junior")
-    public BasicResponse<?> getWorriesForJunior(@AuthenticationPrincipal UserDetails userDetails) {
+    public BasicResponse<GetWorriesResponse.juniorVer> getWorriesForJunior(@AuthenticationPrincipal UserDetails userDetails) {
         String username = userDetails.getUsername();
         GetWorriesResponse.juniorVer response = worryService.getWorriesForJunior(username);
         return BasicResponse.onSuccess(response);
@@ -51,7 +51,7 @@ public class WorryController {
      * 고민 목록 조회(SENIOR ver)
      */
     @GetMapping("/senior")
-    public BasicResponse<?> getWorriesForSenior(@AuthenticationPrincipal UserDetails userDetails) {
+    public BasicResponse<GetWorriesResponse.seniorVer> getWorriesForSenior(@AuthenticationPrincipal UserDetails userDetails) {
         String username = userDetails.getUsername();
         GetWorriesResponse.seniorVer response = worryService.getWorriesForSenior(username);
         return BasicResponse.onSuccess(response);
