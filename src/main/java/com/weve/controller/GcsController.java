@@ -18,7 +18,7 @@ import java.io.IOException;
 @RequiredArgsConstructor
 @Validated
 @Slf4j
-@RequestMapping("/storage")
+@RequestMapping("/api/storage")
 public class GcsController {
 
     private final GcsService gcsService;

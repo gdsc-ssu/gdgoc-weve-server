@@ -19,7 +19,7 @@ import java.io.IOException;
 @RequiredArgsConstructor
 @Validated
 @Slf4j
-@RequestMapping("/stt")
+@RequestMapping("/api/stt")
 public class SttController {
 
     private final SttService sttService;
