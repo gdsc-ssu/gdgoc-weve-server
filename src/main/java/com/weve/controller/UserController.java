@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,10 +30,8 @@ public class UserController {
 
     // 마이페이지 정보 조회
     @GetMapping
-    public ResponseEntity<Map<String, String>> getMypage(@AuthenticationPrincipal CustomUserDetails userDetails) {
-
-        String username = userDetails.getUsername();
-
-        return BasicResponse.onSuccess(mypage);
+    public ResponseEntity<BasicResponse<?>> getMypage(@AuthenticationPrincipal UserDetails userDetails) {
+        BasicResponse<?> response = userService.getMypage(userDetails.getUsername());
+        return ResponseEntity.ok(response);
     }
 }
