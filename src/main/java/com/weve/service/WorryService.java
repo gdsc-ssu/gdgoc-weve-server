@@ -83,7 +83,7 @@ public class WorryService {
     /**
      * 고민 목록 조회(JUNIOR ver)
      */
-    public GetWorriesResponse.juniorVer getWorriesForJunior(String username) {
+    public GetWorriesResponse.JuniorVer getWorriesForJunior(String username) {
 
         log.info("[고민 목록 조회(JUNIOR ver)] username={}", username);
 
@@ -102,13 +102,13 @@ public class WorryService {
                 })
                 .toList();
 
-        return GetWorriesResponse.juniorVer.builder().worryList(worries).build();
+        return GetWorriesResponse.JuniorVer.builder().worryList(worries).build();
     }
 
     /**
      * 고민 목록 조회(SENIOR ver)
      */
-    public GetWorriesResponse.seniorVer getWorriesForSenior(String username) {
+    public GetWorriesResponse.SeniorVer getWorriesForSenior(String username) {
 
         log.info("[고민 목록 조회(SENIOR ver)] username={}", username);
 
@@ -164,7 +164,7 @@ public class WorryService {
                 .relationship(relationships)
                 .build();
 
-        return GetWorriesResponse.seniorVer.builder()
+        return GetWorriesResponse.SeniorVer.builder()
                 .worryList(worryCategoryInfo)
                 .build();
     }
@@ -172,7 +172,7 @@ public class WorryService {
     /**
      * 고민 상세 조회(JUNIOR ver)
      */
-    public GetWorryResponse.juniorVer getWorryForJunior(String username, Long worryId) {
+    public GetWorryResponse.JuniorVer getWorryForJunior(String username, Long worryId) {
 
         log.info("[고민 상세 조회(JUNIOR ver)] username={}, worryId={}", username, worryId);
 
@@ -185,7 +185,7 @@ public class WorryService {
 
         Worry worry = findById(worryId);
 
-        return GetWorryResponse.juniorVer.builder()
+        return GetWorryResponse.JuniorVer.builder()
                 .content(worry.getContent())
                 .author(userDescription)
                 .build();
@@ -194,7 +194,7 @@ public class WorryService {
     /**
      * 고민 상세 조회(SENIOR ver)
      */
-    public GetWorryResponse.seniorVer getWorryForSenior(String username, Long worryId) {
+    public GetWorryResponse.SeniorVer getWorryForSenior(String username, Long worryId) {
 
         log.info("[고민 상세 조회(SENIOR ver)] username={}, worryId={}", username, worryId);
 
@@ -205,7 +205,7 @@ public class WorryService {
 
         Worry worry = findById(worryId);
 
-        return GetWorryResponse.seniorVer.builder()
+        return GetWorryResponse.SeniorVer.builder()
                 .author(worry.getJunior().getName())
                 .nationality(worry.getJunior().getNationality())
                 .content(worry.getContent())
@@ -216,7 +216,7 @@ public class WorryService {
     /**
      * 답변 상세 조회(JUNIOR ver)
      */
-    public GetAnswerResponse.juniorVer getAnswerForJunior(String username, Long worryId) {
+    public GetAnswerResponse.JuniorVer getAnswerForJunior(String username, Long worryId) {
 
         log.info("[답변 상세 조회(JUNIOR ver)] username={}, worryId={}", username, worryId);
 
@@ -240,7 +240,7 @@ public class WorryService {
         Answer answer = worry.getAnswer();
         String userDescription = makeAuthorName(answer.getSenior());
 
-        return GetAnswerResponse.juniorVer.builder()
+        return GetAnswerResponse.JuniorVer.builder()
                 .content(answer.getContent())
                 .author(userDescription)
                 .imageUrl(answer.getImageUrl())
@@ -250,7 +250,7 @@ public class WorryService {
     /**
      * 답변 상세 조회(SENIOR ver)
      */
-    public GetAnswerResponse.seniorVer getAnswerForSenior(String username, Long worryId) {
+    public GetAnswerResponse.SeniorVer getAnswerForSenior(String username, Long worryId) {
 
         log.info("[답변 상세 조회(SENIOR ver)] username={}, worryId={}", username, worryId);
 
@@ -273,7 +273,7 @@ public class WorryService {
             throw new GeneralException(ErrorStatus.ANSWER_NOT_MINE);
         }
 
-        return GetAnswerResponse.seniorVer.builder()
+        return GetAnswerResponse.SeniorVer.builder()
                 .content(answer.getContent())
                 .audioUrl(answer.getAudioUrl())
                 .imageUrl(answer.getImageUrl())
@@ -283,7 +283,7 @@ public class WorryService {
     /**
      * 감사편지 상세 조회(JUNIOR ver)
      */
-    public GetAppreciateResponse.juniorVer getAppreciateForJunior(String username, Long worryId) {
+    public GetAppreciateResponse.JuniorVer getAppreciateForJunior(String username, Long worryId) {
 
         log.info("[감사편지 상세 조회(JUNIOR ver)] username={}, worryId={}", username, worryId);
 
@@ -307,7 +307,7 @@ public class WorryService {
         Appreciate appreciate = worry.getAppreciate();
         String userDescription = makeAuthorName(user);
 
-        return GetAppreciateResponse.juniorVer.builder()
+        return GetAppreciateResponse.JuniorVer.builder()
                 .content(appreciate.getContent())
                 .author(userDescription)
                 .build();

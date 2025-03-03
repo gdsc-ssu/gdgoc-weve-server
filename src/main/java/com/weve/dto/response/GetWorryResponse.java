@@ -13,7 +13,7 @@ public class GetWorryResponse {
     @NoArgsConstructor
     @AllArgsConstructor
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    public static class juniorVer {
+    public static class JuniorVer {
         private String content;
         private String author;
     }
@@ -23,7 +23,7 @@ public class GetWorryResponse {
     @NoArgsConstructor
     @AllArgsConstructor
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    public static class seniorVer {
+    public static class SeniorVer {
         private String author;
         private String nationality;
         private String content;

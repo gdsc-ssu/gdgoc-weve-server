@@ -13,7 +13,7 @@ public class GetAnswerResponse {
     @NoArgsConstructor
     @AllArgsConstructor
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    public static class juniorVer {
+    public static class JuniorVer {
         private String content;
         private String author;
         private String imageUrl;
@@ -24,7 +24,7 @@ public class GetAnswerResponse {
     @NoArgsConstructor
     @AllArgsConstructor
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    public static class seniorVer {
+    public static class SeniorVer {
         private String content;
         private String audioUrl;
         private String imageUrl;

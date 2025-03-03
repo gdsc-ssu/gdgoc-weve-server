@@ -16,7 +16,7 @@ public class GetWorriesResponse {
     @NoArgsConstructor
     @AllArgsConstructor
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    public static class juniorVer {
+    public static class JuniorVer {
         private List<WorryForJunior> worryList;
     }
 
@@ -35,7 +35,7 @@ public class GetWorriesResponse {
     @NoArgsConstructor
     @AllArgsConstructor
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    public static class seniorVer {
+    public static class SeniorVer {
         private WorryCategoryInfo worryList;
     }
 

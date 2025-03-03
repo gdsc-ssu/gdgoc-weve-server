@@ -13,7 +13,7 @@ public class GetAppreciateResponse {
     @NoArgsConstructor
     @AllArgsConstructor
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    public static class juniorVer {
+    public static class JuniorVer {
         private String content;
         private String author;
     }
