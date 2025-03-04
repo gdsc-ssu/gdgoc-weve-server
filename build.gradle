@@ -70,8 +70,11 @@ dependencies {
     // Security 테스트 의존성
     testImplementation 'org.springframework.security:spring-security-test'
 
-    // SMS 인증
+    // CoolSMS SDK
     implementation 'net.nurigo:sdk:4.2.7'
+
+    // JSON-Simple 라이브러리 (CoolSMS 응답을 파싱하기 위해 필요)
+    implementation 'com.googlecode.json-simple:json-simple:1.1.1'
 }
 
 tasks.named('test') {
