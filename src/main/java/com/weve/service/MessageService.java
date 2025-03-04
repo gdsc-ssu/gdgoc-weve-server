@@ -1,12 +1,13 @@
 package com.weve.service;
 
-import net.nurigo.java_sdk.api.Message;
-import net.nurigo.java_sdk.exceptions.CoolsmsException;
-import org.json.simple.JSONObject;
+import net.nurigo.sdk.message.model.Message;
+import net.nurigo.sdk.message.model.MessageType;
+import net.nurigo.sdk.message.request.SingleMessageSendingRequest;
+import net.nurigo.sdk.message.response.SingleMessageSentResponse;
+import net.nurigo.sdk.message.service.DefaultMessageService;
+//import net.nurigo.sdk.message.exception.CoolsmsException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-
-import java.util.HashMap;
 import java.util.Random;
 
 @Service
@@ -30,34 +31,23 @@ public class MessageService {
         return randomNum.toString();
     }
 
-    private HashMap<String, String> makeParams(String to, String randomNum) {
-        HashMap<String, String> params = new HashMap<>();
-        params.put("from", fromNumber);
-        params.put("type", "SMS");
-        params.put("app_version", "test app 1.2");
-        params.put("to", to);
-        params.put("text", randomNum);
-        return params;
-    }
-
-    // 인증번호 전송하기
     public String sendSMS(String phoneNumber) {
-        Message coolsms = new Message(apiKey, apiSecret);
-
-        // 랜덤한 인증 번호 생성
         String randomNum = createRandomNumber();
         System.out.println("인증번호: " + randomNum);
 
-        // 발신 정보 설정
-        HashMap<String, String> params = makeParams(phoneNumber, randomNum);
+        Message message = new Message();
+        message.setFrom(fromNumber);
+        message.setTo(phoneNumber);
+        message.setType(MessageType.SMS);
+        message.setText("[인증번호] " + randomNum);
 
-        try {
-            JSONObject obj = coolsms.send(params);
-            System.out.println(obj.toJSONString());
-        } catch (CoolsmsException e) {
-            System.err.println("문자 전송 실패: " + e.getMessage());
-            return "문자 전송 실패";
-        }
+//        try {
+//            SingleMessageSentResponse response = messageService.sendOne(new SingleMessageSendingRequest(message));
+//            System.out.println("문자 전송 성공: " + response);
+//        } catch (CoolsmsException e) {
+//            System.err.println("문자 전송 실패: " + e.getErrorMessage());
+//            return "문자 전송 실패";
+//        }
 
         return "문자 전송이 완료되었습니다.";
     }
