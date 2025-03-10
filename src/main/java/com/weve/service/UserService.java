@@ -4,6 +4,8 @@ import com.weve.common.api.exception.GeneralException;
 import com.weve.common.api.payload.BasicResponse;
 import com.weve.common.api.payload.code.status.ErrorStatus;
 import com.weve.domain.User;
+import com.weve.domain.enums.Language;
+import com.weve.dto.request.PatchMypageRequest;
 import com.weve.dto.response.MypageResponse;
 import com.weve.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -12,9 +14,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.time.Period;
-import java.util.HashMap;
-import java.util.Map;
 
 import static com.weve.domain.enums.UserType.JUNIOR;
 import static com.weve.domain.enums.UserType.SENIOR;
@@ -60,4 +59,16 @@ public class UserService {
         return BasicResponse.onSuccess(response);
     }
 
+    // 마이페이지 정보 수정
+//    public BasicResponse<MypageResponse> patchMypage(String username, PatchMypageRequest request) {
+//        User user = findByPhoneNumber(username);
+//
+//        String newName = request.getName();
+//        LocalDate newBirth = request.getBirth();
+//        String newPhoneNumber = request.getPhoneNumber();
+//        Language newLanguage = request.getLanguage();
+//
+//
+//
+//    }
 }
