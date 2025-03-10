@@ -62,6 +62,7 @@ public class UserService {
     }
 
     // 마이페이지 정보 수정
+    @Transactional
     public BasicResponse<MypageResponse> patchMypage(String username, PatchMypageRequest request) {
         User user = findByPhoneNumber(username);
 
