@@ -11,7 +11,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.Map;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
 @RequiredArgsConstructor
@@ -21,12 +24,17 @@ public class AuthService {
     private final JwtUtil jwtUtil;
 
     // 회원가입
-    public boolean register(String name, String phoneNumber, LocalDate birth, UserType userType, Language language) {
+    public boolean register(String name, String phoneNumber, LocalDate birth, UserType userType) {
 
         Optional<User> existingUser = userRepository.findByPhoneNumber(phoneNumber);
         if (existingUser.isPresent()) {
             return false;  // 이미 등록된 전화번호
         }
+
+        // 전화번호에서 국가번호 파싱
+        String countryCode = extractCountryCode(phoneNumber);
+        Language language = COUNTRY_LANGUAGE_MAP.getOrDefault(countryCode, Language.KOREAN);
+        String nationality = COUNTRY_NATIONALITY_MAP.getOrDefault(countryCode, "Unknown");
 
         User newUser = User.builder()
                 .name(name)
@@ -34,6 +42,7 @@ public class AuthService {
                 .birth(birth)  // null 허용
                 .userType(userType)
                 .language(language)
+                .nationality(nationality)
                 .build();
 
         userRepository.save(newUser);
@@ -46,5 +55,29 @@ public class AuthService {
                 .filter(user -> user.getName().equals(name)) // 이름 검증 추가
                 .map(user -> jwtUtil.generateToken(user.getPhoneNumber()))
                 .orElse(null);
+    }
+
+    // 국가 번호별 언어 및 국적 매핑
+    private static final Map<String, Language> COUNTRY_LANGUAGE_MAP = Map.of(
+            "+82", Language.KOREAN,  // 한국
+            "+1", Language.ENGLISH,   // 미국
+            "+81", Language.JAPANESE  // 일본
+    );
+
+    private static final Map<String, String> COUNTRY_NATIONALITY_MAP = Map.of(
+            "+82", "South Korea",  // 대한민국
+            "+1", "United States", // 미국
+            "+81", "Japan"         // 일본
+    );
+
+    // 국가 코드 추출
+    private static final Pattern PHONE_PATTERN = Pattern.compile("^(\\+\\d{1,3})\\s?\\d+");
+
+    private String extractCountryCode(String phoneNumber) {
+        Matcher matcher = PHONE_PATTERN.matcher(phoneNumber);
+        if (matcher.find()) {
+            return matcher.group(1); // 국가 코드 반환
+        }
+        return ""; // 기본값
     }
 }
