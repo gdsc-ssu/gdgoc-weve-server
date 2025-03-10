@@ -2,6 +2,8 @@ package com.weve.controller;
 
 import com.weve.common.api.payload.BasicResponse;
 import com.weve.domain.User;
+import com.weve.dto.request.PatchMypageRequest;
+import com.weve.dto.response.MypageResponse;
 import com.weve.repository.UserRepository;
 import com.weve.security.CustomUserDetails;
 import com.weve.service.UserService;
@@ -13,6 +15,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -28,8 +31,17 @@ public class UserController {
 
     // 마이페이지 정보 조회
     @GetMapping
-    public BasicResponse<?> getMypage(@AuthenticationPrincipal UserDetails userDetails) {
-        BasicResponse<?> response = userService.getMypage(userDetails.getUsername());
+    public BasicResponse<MypageResponse> getMypage(@AuthenticationPrincipal UserDetails userDetails) {
+
+        String username = userDetails.getUsername();
+        MypageResponse response = userService.getMypage(username).getResult();
         return BasicResponse.onSuccess(response);
     }
+
+    // 마이페이지 정보 수정
+//    @PatchMapping
+//    public BasicResponse<?> patchMypage(@AuthenticationPrincipal UserDetails userDetails, @RequestBody PatchMypageRequest request) {
+//        BasicResponse<?> response = userService.patchMypage(userDetails.getUsername(), request);
+//        return BasicResponse.onSuccess(response);
+//    }
 }
