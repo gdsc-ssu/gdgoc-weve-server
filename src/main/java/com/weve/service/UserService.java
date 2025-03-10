@@ -4,6 +4,9 @@ import com.weve.common.api.exception.GeneralException;
 import com.weve.common.api.payload.BasicResponse;
 import com.weve.common.api.payload.code.status.ErrorStatus;
 import com.weve.domain.User;
+import com.weve.domain.enums.Language;
+import com.weve.dto.request.PatchMypageRequest;
+import com.weve.dto.response.MypageResponse;
 import com.weve.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -11,12 +14,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.time.Period;
-import java.util.HashMap;
-import java.util.Map;
 
 import static com.weve.domain.enums.UserType.JUNIOR;
 import static com.weve.domain.enums.UserType.SENIOR;
+import static com.weve.service.AuthService.COUNTRY_NATIONALITY_MAP;
 
 @Slf4j
 @Service
@@ -25,6 +26,7 @@ import static com.weve.domain.enums.UserType.SENIOR;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final AuthService authService;
 
     // id로 유저 검색
     public User findById(Long memberId) {
@@ -53,27 +55,35 @@ public class UserService {
     }
 
     // 마이페이지 정보 조회
-    public BasicResponse<?> getMypage(String username) {
-
-        User user = userRepository.findByPhoneNumber(username)
-                .orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
-
-        // 생년월일을 LocalDate로 변환
-        LocalDate birthDate = user.getBirth();
-        int age = calculateAge(birthDate);
-
-        Map<String, Object> result = new HashMap<>();
-        result.put("name", user.getName());
-        result.put("nationality", user.getNationality());
-        result.put("birth", birthDate.toString());
-        result.put("age", age);
-        result.put("language", user.getLanguage());
-
-        return BasicResponse.onSuccess(result);
+    public BasicResponse<MypageResponse> getMypage(String username) {
+        User user = findByPhoneNumber(username);
+        MypageResponse response = MypageResponse.fromUser(user);
+        return BasicResponse.onSuccess(response);
     }
 
-    // 나이 계산 메서드 (만 나이 기준)
-    private int calculateAge(LocalDate birthDate) {
-        return Period.between(birthDate, LocalDate.now()).getYears();
+    // 마이페이지 정보 수정
+    @Transactional
+    public BasicResponse<MypageResponse> patchMypage(String username, PatchMypageRequest request) {
+        User user = findByPhoneNumber(username);
+
+        // 전화번호 국가번호 변경 시 국적도 변경
+        String newPhoneNumber = request.getPhoneNumber() != null ? request.getPhoneNumber() : user.getPhoneNumber();
+
+        String newCountryCode = authService.extractCountryCode(newPhoneNumber);
+        String newNationality = authService.COUNTRY_NATIONALITY_MAP.getOrDefault(newCountryCode, user.getNationality());
+
+        User patchedUser = user.toBuilder()
+                .name(request.getName() != null ? request.getName() : user.getName())
+                .birth(request.getBirth() != null ? request.getBirth() : user.getBirth())
+                .phoneNumber(newPhoneNumber)
+                .language((request.getLanguage() != null ? request.getLanguage() : user.getLanguage()))
+                .nationality(newNationality)
+                .build();
+
+        userRepository.save(patchedUser);
+        MypageResponse response = MypageResponse.fromUser(patchedUser);
+        return BasicResponse.onSuccess(response);
+
+
     }
 }
