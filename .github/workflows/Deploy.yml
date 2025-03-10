@@ -31,8 +31,10 @@ jobs:
     - name: Set environment values
       run: |
         cd ./src/main/resources
+        mkdir -p ./gcp
         touch ./application.yml
         echo "${{ secrets.APPLICATION_PROPERTIES }}" > ./application.yml
+        echo "${{ secrets.GCP_SERVICE_KEY }}" | base64 --decode > ./gcp/service-key.json
       shell: bash
     # Gradle build (Test 제외)
     - name: Build with Gradle
