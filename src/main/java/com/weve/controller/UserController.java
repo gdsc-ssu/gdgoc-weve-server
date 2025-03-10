@@ -39,9 +39,9 @@ public class UserController {
     }
 
     // 마이페이지 정보 수정
-//    @PatchMapping
-//    public BasicResponse<?> patchMypage(@AuthenticationPrincipal UserDetails userDetails, @RequestBody PatchMypageRequest request) {
-//        BasicResponse<?> response = userService.patchMypage(userDetails.getUsername(), request);
-//        return BasicResponse.onSuccess(response);
-//    }
+    @PatchMapping
+    public BasicResponse<MypageResponse> patchMypage(@AuthenticationPrincipal UserDetails userDetails, @RequestBody PatchMypageRequest request) {
+        MypageResponse response = userService.patchMypage(userDetails.getUsername(), request).getResult();
+        return BasicResponse.onSuccess(response);
+    }
 }

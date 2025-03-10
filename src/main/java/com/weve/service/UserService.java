@@ -60,15 +60,19 @@ public class UserService {
     }
 
     // 마이페이지 정보 수정
-//    public BasicResponse<MypageResponse> patchMypage(String username, PatchMypageRequest request) {
-//        User user = findByPhoneNumber(username);
-//
-//        String newName = request.getName();
-//        LocalDate newBirth = request.getBirth();
-//        String newPhoneNumber = request.getPhoneNumber();
-//        Language newLanguage = request.getLanguage();
-//
-//
-//
-//    }
+    public BasicResponse<MypageResponse> patchMypage(String username, PatchMypageRequest request) {
+        User user = findByPhoneNumber(username);
+
+        User patchedUser = user.toBuilder()
+                .name(request.getName() != null ? request.getName() : user.getName())
+                .birth(request.getBirth() != null ? request.getBirth() : user.getBirth())
+                .phoneNumber(request.getPhoneNumber() != null ? request.getPhoneNumber() : user.getPhoneNumber())
+                .language((request.getLanguage() != null ? request.getLanguage() : user.getLanguage()))
+                .build();
+
+        userRepository.save(patchedUser);
+        MypageResponse response = MypageResponse.fromUser(patchedUser);
+        return BasicResponse.onSuccess(response);
+
+    }
 }
