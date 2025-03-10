@@ -55,8 +55,7 @@ public class UserService {
     // 마이페이지 정보 조회
     public BasicResponse<?> getMypage(String username) {
 
-        User user = userRepository.findByPhoneNumber(username)
-                .orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
+        User user = findByPhoneNumber(username);
 
         // 생년월일을 LocalDate로 변환
         LocalDate birthDate = user.getBirth();
