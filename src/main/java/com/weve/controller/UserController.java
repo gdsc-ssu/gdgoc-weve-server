@@ -7,6 +7,7 @@ import com.weve.dto.response.MypageResponse;
 import com.weve.repository.UserRepository;
 import com.weve.security.CustomUserDetails;
 import com.weve.service.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
