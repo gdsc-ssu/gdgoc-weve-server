@@ -19,5 +19,5 @@ public class UserRequestDto {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd") // JSON → LocalDate 변환
     private LocalDate birth;
     private UserType userType;
-    private Language language;
+    //private Language language;  // 전화번호 국가번호로 국적 저장
 }
