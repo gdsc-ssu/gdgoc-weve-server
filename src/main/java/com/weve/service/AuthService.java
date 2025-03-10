@@ -8,6 +8,7 @@ import com.weve.domain.enums.UserType;
 import com.weve.repository.UserRepository;
 import com.weve.security.JwtUtil;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.codec.language.bm.Lang;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -24,7 +25,7 @@ public class AuthService {
     private final JwtUtil jwtUtil;
 
     // 회원가입
-    public boolean register(String name, String phoneNumber, LocalDate birth, UserType userType) {
+    public boolean register(String name, String phoneNumber, LocalDate birth, UserType userType, Language language) {
 
         Optional<User> existingUser = userRepository.findByPhoneNumber(phoneNumber);
         if (existingUser.isPresent()) {
@@ -33,7 +34,6 @@ public class AuthService {
 
         // 전화번호에서 국가번호 파싱
         String countryCode = extractCountryCode(phoneNumber);
-        Language language = COUNTRY_LANGUAGE_MAP.getOrDefault(countryCode, Language.KOREAN);
         String nationality = COUNTRY_NATIONALITY_MAP.getOrDefault(countryCode, "Unknown");
 
         User newUser = User.builder()
@@ -57,23 +57,17 @@ public class AuthService {
                 .orElse(null);
     }
 
-    // 국가 번호별 언어 및 국적 매핑
-    private static final Map<String, Language> COUNTRY_LANGUAGE_MAP = Map.of(
-            "+82", Language.KOREAN,  // 한국
-            "+1", Language.ENGLISH,   // 미국
-            "+81", Language.JAPANESE  // 일본
-    );
-
-    private static final Map<String, String> COUNTRY_NATIONALITY_MAP = Map.of(
+    // 국가 번호별 국적 매핑
+    public static final Map<String, String> COUNTRY_NATIONALITY_MAP = Map.of(
             "+82", "South Korea",  // 대한민국
             "+1", "United States", // 미국
             "+81", "Japan"         // 일본
     );
 
     // 국가 코드 추출
-    private static final Pattern PHONE_PATTERN = Pattern.compile("^(\\+\\d{1,3})\\s?\\d+");
+    public static final Pattern PHONE_PATTERN = Pattern.compile("^(\\+\\d{1,3})\\s?\\d+");
 
-    private String extractCountryCode(String phoneNumber) {
+    public String extractCountryCode(String phoneNumber) {
         Matcher matcher = PHONE_PATTERN.matcher(phoneNumber);
         if (matcher.find()) {
             return matcher.group(1); // 국가 코드 반환

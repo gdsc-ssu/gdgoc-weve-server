@@ -17,6 +17,7 @@ import java.time.LocalDate;
 
 import static com.weve.domain.enums.UserType.JUNIOR;
 import static com.weve.domain.enums.UserType.SENIOR;
+import static com.weve.service.AuthService.COUNTRY_NATIONALITY_MAP;
 
 @Slf4j
 @Service
@@ -25,6 +26,7 @@ import static com.weve.domain.enums.UserType.SENIOR;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final AuthService authService;
 
     // id로 유저 검색
     public User findById(Long memberId) {
@@ -63,11 +65,18 @@ public class UserService {
     public BasicResponse<MypageResponse> patchMypage(String username, PatchMypageRequest request) {
         User user = findByPhoneNumber(username);
 
+        // 전화번호 국가번호 변경 시 국적도 변경
+        String newPhoneNumber = request.getPhoneNumber() != null ? request.getPhoneNumber() : user.getPhoneNumber();
+
+        String newCountryCode = authService.extractCountryCode(newPhoneNumber);
+        String newNationality = authService.COUNTRY_NATIONALITY_MAP.getOrDefault(newCountryCode, user.getNationality());
+
         User patchedUser = user.toBuilder()
                 .name(request.getName() != null ? request.getName() : user.getName())
                 .birth(request.getBirth() != null ? request.getBirth() : user.getBirth())
-                .phoneNumber(request.getPhoneNumber() != null ? request.getPhoneNumber() : user.getPhoneNumber())
+                .phoneNumber(newPhoneNumber)
                 .language((request.getLanguage() != null ? request.getLanguage() : user.getLanguage()))
+                .nationality(newNationality)
                 .build();
 
         userRepository.save(patchedUser);
