@@ -84,5 +84,6 @@ public class UserService {
         MypageResponse response = MypageResponse.fromUser(patchedUser);
         return BasicResponse.onSuccess(response);
 
+
     }
 }
