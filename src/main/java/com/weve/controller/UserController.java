@@ -11,9 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -30,8 +28,8 @@ public class UserController {
 
     // 마이페이지 정보 조회
     @GetMapping
-    public ResponseEntity<BasicResponse<?>> getMypage(@AuthenticationPrincipal UserDetails userDetails) {
+    public BasicResponse<?> getMypage(@AuthenticationPrincipal UserDetails userDetails) {
         BasicResponse<?> response = userService.getMypage(userDetails.getUsername());
-        return ResponseEntity.ok(response);
+        return BasicResponse.onSuccess(response);
     }
 }
