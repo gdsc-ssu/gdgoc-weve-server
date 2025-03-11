@@ -4,6 +4,7 @@ import com.weve.common.api.payload.BasicResponse;
 import com.weve.common.api.payload.code.status.ErrorStatus;
 import com.weve.dto.request.UserRequestDto;
 import com.weve.service.AuthService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.persistence.Basic;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
+@Tag(name = "Auth", description = "Auth 관련 API입니다.")
 public class AuthController {
 
     private final AuthService authService;
