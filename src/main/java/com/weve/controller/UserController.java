@@ -9,7 +9,7 @@ import com.weve.dto.response.SeniorProfileResponse;
 import com.weve.repository.UserRepository;
 import com.weve.security.CustomUserDetails;
 import com.weve.service.UserService;
-import jakarta.persistence.Basic;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,6 +28,7 @@ import java.util.Map;
 @Validated
 @Slf4j
 @RequestMapping("/api")
+@Tag(name = "User", description = "User 관련 API입니다.")
 public class UserController {
 
     private final UserService userService;
