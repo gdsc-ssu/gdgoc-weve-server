@@ -3,7 +3,9 @@ package com.weve.controller;
 import com.weve.common.api.payload.BasicResponse;
 import com.weve.domain.User;
 import com.weve.dto.request.PatchMypageRequest;
+import com.weve.dto.request.SeniorInfoRequest;
 import com.weve.dto.response.MypageResponse;
+import com.weve.dto.response.SeniorProfileResponse;
 import com.weve.repository.UserRepository;
 import com.weve.security.CustomUserDetails;
 import com.weve.service.UserService;
@@ -25,7 +27,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 @Validated
 @Slf4j
-@RequestMapping("/api/mypage")
+@RequestMapping("/api")
 @Tag(name = "User", description = "User 관련 API입니다.")
 public class UserController {
 
@@ -33,7 +35,7 @@ public class UserController {
     private final UserRepository userRepository;
 
     // 마이페이지 정보 조회
-    @GetMapping
+    @GetMapping("/mypage")
     public BasicResponse<MypageResponse> getMypage(@AuthenticationPrincipal UserDetails userDetails) {
 
         String username = userDetails.getUsername();
@@ -42,9 +44,28 @@ public class UserController {
     }
 
     // 마이페이지 정보 수정
-    @PatchMapping
+    @PatchMapping("/mypage")
     public BasicResponse<MypageResponse> patchMypage(@AuthenticationPrincipal UserDetails userDetails, @RequestBody PatchMypageRequest request) {
         MypageResponse response = userService.patchMypage(userDetails.getUsername(), request).getResult();
+        return BasicResponse.onSuccess(response);
+    }
+
+    // 어르신 정보 입력
+    @PostMapping("/senior")
+    public BasicResponse<?> postSeniorInfo(@AuthenticationPrincipal UserDetails userDetails, @RequestBody SeniorInfoRequest request) {
+
+        String username = userDetails.getUsername();
+        userService.postSeniorInfo(username, request);
+
+        return BasicResponse.onSuccess(null);
+    }
+
+    // 어르신 정보 확인
+    @GetMapping("/senior")
+    public BasicResponse<SeniorProfileResponse> getSeniorInfo(@AuthenticationPrincipal UserDetails userDetails) {
+
+        String username = userDetails.getUsername();
+        SeniorProfileResponse response = userService.getSeniorInfo(username).getResult();
         return BasicResponse.onSuccess(response);
     }
 }
