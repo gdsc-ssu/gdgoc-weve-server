@@ -3,10 +3,12 @@ package com.weve.controller;
 import com.weve.common.api.payload.BasicResponse;
 import com.weve.domain.User;
 import com.weve.dto.request.PatchMypageRequest;
+import com.weve.dto.request.SeniorInfoRequest;
 import com.weve.dto.response.MypageResponse;
 import com.weve.repository.UserRepository;
 import com.weve.security.CustomUserDetails;
 import com.weve.service.UserService;
+import jakarta.persistence.Basic;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,14 +26,14 @@ import java.util.Map;
 @RequiredArgsConstructor
 @Validated
 @Slf4j
-@RequestMapping("/api/mypage")
+@RequestMapping("/api")
 public class UserController {
 
     private final UserService userService;
     private final UserRepository userRepository;
 
     // 마이페이지 정보 조회
-    @GetMapping
+    @GetMapping("/mypage")
     public BasicResponse<MypageResponse> getMypage(@AuthenticationPrincipal UserDetails userDetails) {
 
         String username = userDetails.getUsername();
@@ -40,9 +42,19 @@ public class UserController {
     }
 
     // 마이페이지 정보 수정
-    @PatchMapping
+    @PatchMapping("/mypage")
     public BasicResponse<MypageResponse> patchMypage(@AuthenticationPrincipal UserDetails userDetails, @RequestBody PatchMypageRequest request) {
         MypageResponse response = userService.patchMypage(userDetails.getUsername(), request).getResult();
         return BasicResponse.onSuccess(response);
+    }
+
+    // 어르신 정보 입력
+    @PostMapping("/senior")
+    public BasicResponse<?> postSeniorInfo(@AuthenticationPrincipal UserDetails userDetails, @RequestBody SeniorInfoRequest request) {
+
+        String username = userDetails.getUsername();
+        userService.postSeniorInfo(username, request);
+
+        return BasicResponse.onSuccess(null);
     }
 }
