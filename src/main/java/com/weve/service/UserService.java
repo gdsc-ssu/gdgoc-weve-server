@@ -11,6 +11,7 @@ import com.weve.domain.enums.ValueCategory;
 import com.weve.dto.request.PatchMypageRequest;
 import com.weve.dto.request.SeniorInfoRequest;
 import com.weve.dto.response.MypageResponse;
+import com.weve.dto.response.SeniorProfileResponse;
 import com.weve.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -121,6 +122,13 @@ public class UserService {
 
         // 변경된 User 엔티티 저장
         userRepository.save(newUser);
+    }
 
+    // 어르신 정보 확인
+    public BasicResponse<SeniorProfileResponse> getSeniorInfo(String username) {
+
+        User user = findByPhoneNumber(username);
+        SeniorProfileResponse response = SeniorProfileResponse.fromUser(user);
+        return BasicResponse.onSuccess(response);
     }
 }
