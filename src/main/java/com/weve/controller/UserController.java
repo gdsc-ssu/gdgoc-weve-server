@@ -5,6 +5,7 @@ import com.weve.domain.User;
 import com.weve.dto.request.PatchMypageRequest;
 import com.weve.dto.request.SeniorInfoRequest;
 import com.weve.dto.response.MypageResponse;
+import com.weve.dto.response.SeniorProfileResponse;
 import com.weve.repository.UserRepository;
 import com.weve.security.CustomUserDetails;
 import com.weve.service.UserService;
@@ -56,5 +57,14 @@ public class UserController {
         userService.postSeniorInfo(username, request);
 
         return BasicResponse.onSuccess(null);
+    }
+
+    // 어르신 정보 확인
+    @GetMapping("/senior")
+    public BasicResponse<SeniorProfileResponse> getSeniorInfo(@AuthenticationPrincipal UserDetails userDetails) {
+
+        String username = userDetails.getUsername();
+        SeniorProfileResponse response = userService.getSeniorInfo(username).getResult();
+        return BasicResponse.onSuccess(response);
     }
 }
