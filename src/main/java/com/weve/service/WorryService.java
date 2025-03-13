@@ -206,8 +206,7 @@ public class WorryService {
         Worry worry = findById(worryId);
 
         return GetWorryResponse.SeniorVer.builder()
-                .author(worry.getJunior().getName())
-                .nationality(worry.getJunior().getNationality())
+                .author(makeAuthorName(worry.getJunior()))
                 .content(worry.getContent())
                 .audioUrl(worry.getAudioUrl())
                 .build();

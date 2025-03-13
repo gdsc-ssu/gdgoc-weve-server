@@ -2,6 +2,7 @@ package com.weve.controller;
 
 import com.weve.common.api.payload.BasicResponse;
 import com.weve.service.MessageService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.persistence.Basic;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 @Validated
 @Slf4j
 @RequestMapping("/api/auth/sms")
+@Tag(name = "SMS", description = "SMS 관련 API입니다.")
 public class MessageController {
 
     private final MessageService messageService;

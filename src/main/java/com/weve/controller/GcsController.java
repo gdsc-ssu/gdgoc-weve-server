@@ -3,6 +3,8 @@ package com.weve.controller;
 import com.weve.common.api.payload.BasicResponse;
 import com.weve.dto.response.UploadFileResponse;
 import com.weve.service.GcsService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
@@ -19,11 +21,13 @@ import java.io.IOException;
 @Validated
 @Slf4j
 @RequestMapping("/api/storage")
+@Tag(name = "Storage", description = "Goolge Cloud Storage 관련 API입니다.")
 public class GcsController {
 
     private final GcsService gcsService;
 
     @PostMapping("/upload")
+    @Operation(summary = "파일 업로드", description = "파일을 업로드하여 URL을 생성합니다.")
     public BasicResponse<UploadFileResponse> uploadFile(@RequestPart(value = "file") MultipartFile multipartFile) throws IOException {
 
 

@@ -6,6 +6,8 @@ import com.weve.dto.request.CreateWorryRequest;
 import com.weve.dto.response.*;
 import com.weve.service.AnswerService;
 import com.weve.service.WorryService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 @Validated
 @Slf4j
 @RequestMapping("/api/worries")
+@Tag(name = "Worry", description = "Worry 관련 API입니다.")
 public class WorryController {
 
     private final WorryService worryService;
@@ -28,6 +31,7 @@ public class WorryController {
      * 고민 작성하기
      */
     @PostMapping
+    @Operation(summary = "고민 작성하기", description = "고민을 작성합니다.")
     public BasicResponse<CreateWorryResponse> createWorry(@AuthenticationPrincipal UserDetails userDetails,
                                                           @RequestBody @Valid CreateWorryRequest request) {
 
@@ -41,6 +45,7 @@ public class WorryController {
      * 고민 목록 조회(JUNIOR ver)
      */
     @GetMapping("/junior")
+    @Operation(summary = "고민 목록 조회(JUNIOR ver)", description = "고민 목록을 조회합니다.(JUNIOR ver)")
     public BasicResponse<GetWorriesResponse.JuniorVer> getWorriesForJunior(@AuthenticationPrincipal UserDetails userDetails) {
         String username = userDetails.getUsername();
         GetWorriesResponse.JuniorVer response = worryService.getWorriesForJunior(username);
@@ -51,6 +56,7 @@ public class WorryController {
      * 고민 목록 조회(SENIOR ver)
      */
     @GetMapping("/senior")
+    @Operation(summary = "고민 목록 조회(SENIOR ver)", description = "고민 목록을 조회합니다.(SENIOR ver)")
     public BasicResponse<GetWorriesResponse.SeniorVer> getWorriesForSenior(@AuthenticationPrincipal UserDetails userDetails) {
         String username = userDetails.getUsername();
         GetWorriesResponse.SeniorVer response = worryService.getWorriesForSenior(username);
@@ -61,6 +67,7 @@ public class WorryController {
      * 고민 상세 조회(JUNIOR ver)
      */
     @GetMapping("/{worryId}/junior")
+    @Operation(summary = "고민 상세 조회(JUNIOR ver)", description = "고민을 상세 조회합니다.(JUNIOR ver)")
     public BasicResponse<GetWorryResponse.JuniorVer> getWorryForJunior(@AuthenticationPrincipal UserDetails userDetails,
                                                                        @PathVariable Long worryId) {
         String username = userDetails.getUsername();
@@ -72,6 +79,7 @@ public class WorryController {
      * 고민 상세 조회(SENIOR ver)
      */
     @GetMapping("/{worryId}/senior")
+    @Operation(summary = "고민 상세 조회(SENIOR ver)", description = "고민을 상세 조회합니다.(SENIOR ver)")
     public BasicResponse<GetWorryResponse.SeniorVer> getWorryForSenior(@AuthenticationPrincipal UserDetails userDetails,
                                                                        @PathVariable Long worryId) {
         String username = userDetails.getUsername();
@@ -83,6 +91,7 @@ public class WorryController {
      * 답변 작성하기
      */
     @PostMapping("/{worryId}/answer")
+    @Operation(summary = "답변 작성하기", description = "답변을 작성합니다.")
     public BasicResponse<?> createAnswer(@AuthenticationPrincipal UserDetails userDetails,
                                          @PathVariable Long worryId,
                                          @RequestBody @Valid CreateAnswerRequest request) {
@@ -97,6 +106,7 @@ public class WorryController {
      * 답변 상세 조회(JUNIOR ver)
      */
     @GetMapping("/{worryId}/answer/junior")
+    @Operation(summary = "답변 상세 조회(JUNIOR ver)", description = "답변을 상세 조회합니다.(JUNIOR ver)")
     public BasicResponse<GetAnswerResponse.JuniorVer> getAnswerForJunior(@AuthenticationPrincipal UserDetails userDetails,
                                                                          @PathVariable Long worryId) {
         String username = userDetails.getUsername();
@@ -108,6 +118,7 @@ public class WorryController {
      * 답변 상세 조회(SENIOR ver)
      */
     @GetMapping("/{worryId}/answer/senior")
+    @Operation(summary = "답변 상세 조회(SENIOR ver)", description = "답변을 상세 조회합니다.(SENIOR ver)")
     public BasicResponse<GetAnswerResponse.SeniorVer> getAnswerForSenior(@AuthenticationPrincipal UserDetails userDetails,
                                                                          @PathVariable Long worryId) {
         String username = userDetails.getUsername();
@@ -119,6 +130,7 @@ public class WorryController {
      * 감사편지 상세 조회(JUNIOR ver)
      */
     @GetMapping("/{worryId}/appreciate/junior")
+    @Operation(summary = "감사편지 상세 조회(JUNIOR ver)", description = "감사편지를 상세 조회합니다.(JUNIOR ver)")
     public BasicResponse<GetAppreciateResponse.JuniorVer> getAppreciateForJunior(@AuthenticationPrincipal UserDetails userDetails,
                                                                                  @PathVariable Long worryId) {
         String username = userDetails.getUsername();
