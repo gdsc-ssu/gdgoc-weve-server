@@ -3,6 +3,8 @@ package com.weve.controller;
 import com.weve.common.api.payload.BasicResponse;
 import com.weve.dto.response.SpeechToTextResponse;
 import com.weve.service.SttService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
@@ -20,14 +22,13 @@ import java.io.IOException;
 @Validated
 @Slf4j
 @RequestMapping("/api/stt")
+@Tag(name = "STT", description = "STT(Speech-to-Text) 관련 API입니다.")
 public class SttController {
 
     private final SttService sttService;
 
-    /**
-     * STT(Speech-to-Text) : 오디오 파일을 받아서 텍스트로 변환하여 반환
-     */
     @PostMapping(value = "", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @Operation(summary = "STT(Speech-to-Text)", description = "오디오 파일을 업로드하여 텍스트로 변환합니다.")
     public BasicResponse<SpeechToTextResponse> handleAudioMessage(@RequestParam MultipartFile audioFile,
                                                                   @RequestParam(defaultValue = "ios") String os) throws IOException {
         int frequency = os.equals("android") ? 44100 : 48000; //샘플링 주파수: ios-48000, android-44100
