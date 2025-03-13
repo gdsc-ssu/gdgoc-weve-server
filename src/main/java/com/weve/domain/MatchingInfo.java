@@ -9,7 +9,7 @@ import jakarta.persistence.Enumerated;
 import lombok.*;
 
 @Getter
-@Builder
+@Builder(toBuilder = true)
 @Embeddable
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
