@@ -30,6 +30,8 @@ public class GeminiResponse {
 
     @Getter
     @Builder
+    @NoArgsConstructor  // 기본 생성자 추가 (역직렬화 오류 해결)
+    @AllArgsConstructor
     public static class Part {
         private String text;
     }
