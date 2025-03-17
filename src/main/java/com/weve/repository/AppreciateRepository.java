@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface AppreciateRepository extends JpaRepository<Appreciate, Long> {
 
-    List<Appreciate> findByUserAndIsReadIsFalse(User user);
+    List<Appreciate> findByWorry_Answer_SeniorAndIsReadIsFalse(User user); // 읽지 않은 감사편지
 
-    List<Appreciate> findByUserAndIsReadIsTrue(User user);
+    List<Appreciate> findByWorry_Answer_SeniorAndIsReadIsTrue(User user); // 읽은 감사편지
 }

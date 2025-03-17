@@ -93,11 +93,8 @@ public class AppreciateService {
 
         User user = userService.findByPhoneNumber(username);
 
-        // 읽지 않은 감사편지 조회
-        List<Appreciate> newAppreciate = appreciateRepository.findByUserAndIsReadIsFalse(user);
-
-        // 읽은 감사편지 조회
-        List<Appreciate> readAppreciate = appreciateRepository.findByUserAndIsReadIsTrue(user);
+        List<Appreciate> newAppreciate = appreciateRepository.findByWorry_Answer_SeniorAndIsReadIsFalse(user);
+        List<Appreciate> readAppreciate = appreciateRepository.findByWorry_Answer_SeniorAndIsReadIsTrue(user);
 
         GetAppreciateListResponse response = GetAppreciateListResponse.builder()
                 .new_appreciate(newAppreciate)

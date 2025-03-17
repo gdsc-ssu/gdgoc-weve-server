@@ -18,10 +18,6 @@ public class Appreciate extends BaseEntity {
     @JoinColumn(name = "worry_id", nullable = false)
     private Worry worry;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user; // 감사편지를 받은 사용자
-
     private String content;
 
     private String audioUrl;
