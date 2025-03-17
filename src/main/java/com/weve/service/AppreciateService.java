@@ -1,9 +1,12 @@
 package com.weve.service;
 
+import com.weve.common.api.exception.GeneralException;
+import com.weve.common.api.payload.code.status.ErrorStatus;
 import com.weve.domain.Appreciate;
 import com.weve.domain.User;
 import com.weve.domain.Worry;
 import com.weve.dto.request.PostAppreciateRequest;
+import com.weve.dto.response.GetAppreciateResponse;
 import com.weve.repository.AppreciateRepository;
 import com.weve.repository.WorryRepository;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +23,7 @@ public class AppreciateService {
     private final UserService userService;
     private final WorryRepository worryRepository;
     private final AppreciateRepository appreciateRepository;
+    private final WorryService worryService;
 
     @Transactional
     public void postAppreciate(String username, PostAppreciateRequest request) {
@@ -47,5 +51,33 @@ public class AppreciateService {
 
         appreciateRepository.save(appreciate);
         log.info("감사 인사 저장 완료: worryId={}, appreciateId={}", worry.getId(), appreciate.getId());
+    }
+
+    // 감사편지 상세 조회 (어르신용)
+    public GetAppreciateResponse.SeniorVer getAppreciate(String username, Long worryId) {
+
+        User user = userService.findByPhoneNumber(username);
+
+        // 유저 타입 검사
+        //userService.checkIfSenior(user);
+
+        Worry worry = worryService.findById(worryId);
+
+        // 본인 고민이 아닌 경우, 에러 반환
+        if(worry.getJunior() != user) {
+            throw new GeneralException(ErrorStatus.WORRY_NOT_MINE);
+        }
+
+        // 감사인사가 존재하지 않는 고민일 경우, 에러 반환
+        if(worry.getAppreciate() == null) {
+            throw new GeneralException(ErrorStatus.WORRY_APPRECIATE_NOT_FOUND);
+        }
+
+        Appreciate appreciate = worry.getAppreciate();
+
+        return GetAppreciateResponse.SeniorVer.builder()
+                .content(appreciate.getContent())
+                .mp3(appreciate.getAudioUrl())
+                .build();
     }
 }

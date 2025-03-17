@@ -31,4 +31,12 @@ public class AppreciateController {
         return BasicResponse.onSuccess(null);
     }
 
+    // 감사편지 상세 조회 (어르신용)
+    @GetMapping
+    public BasicResponse<GetAppreciateResponse.SeniorVer> getAppreciate(@AuthenticationPrincipal UserDetails userDetails, @RequestParam Long worryId) {
+
+        String username = userDetails.getUsername();
+        GetAppreciateResponse.SeniorVer response = appreciateService.getAppreciate(username, worryId);
+        return BasicResponse.onSuccess(response);
+    }
 }
