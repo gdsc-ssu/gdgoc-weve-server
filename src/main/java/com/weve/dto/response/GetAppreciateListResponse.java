@@ -1,6 +1,7 @@
 package com.weve.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.weve.domain.Appreciate;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -13,8 +14,8 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class GetAppreciateList {
+public class GetAppreciateListResponse {
 
-    private List<Integer> new_appreciate;
-    private List<Integer> read_appreciate;
+    private List<Appreciate> new_appreciate;
+    private List<Appreciate> read_appreciate;
 }

@@ -2,6 +2,7 @@ package com.weve.controller;
 
 import com.weve.common.api.payload.BasicResponse;
 import com.weve.dto.request.PostAppreciateRequest;
+import com.weve.dto.response.GetAppreciateListResponse;
 import com.weve.dto.response.GetAppreciateResponse;
 import com.weve.service.AppreciateService;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -40,4 +41,12 @@ public class AppreciateController {
         return BasicResponse.onSuccess(response);
     }
 
+    // 감사편지 목록 조회
+    @GetMapping
+    public BasicResponse<GetAppreciateListResponse> getAppreciateList(@AuthenticationPrincipal UserDetails userDetails) {
+
+        String username = userDetails.getUsername();
+        GetAppreciateListResponse response = appreciateService.getAppreciateList(username).getResult();
+        return BasicResponse.onSuccess(response);
+    }
 }
