@@ -54,6 +54,7 @@ public class AppreciateService {
     }
 
     // 감사편지 상세 조회 (어르신용)
+    @Transactional
     public GetAppreciateResponse.SeniorVer getAppreciate(String username, Long worryId) {
 
         User user = userService.findByPhoneNumber(username);
@@ -74,6 +75,8 @@ public class AppreciateService {
         }
 
         Appreciate appreciate = worry.getAppreciate();
+        appreciate.isRead = true;  // 조회하면 읽음으로 변경
+        appreciateRepository.save(appreciate);
 
         return GetAppreciateResponse.SeniorVer.builder()
                 .content(appreciate.getContent())
