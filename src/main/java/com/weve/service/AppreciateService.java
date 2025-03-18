@@ -79,7 +79,7 @@ public class AppreciateService {
         }
 
         Appreciate appreciate = worry.getAppreciate();
-        appreciate.isRead = true;  // 조회하면 읽음으로 변경
+        appreciate.setAsRead(); // 조회하면 읽음으로 변경
         appreciateRepository.save(appreciate);
 
         return GetAppreciateResponse.SeniorVer.builder()

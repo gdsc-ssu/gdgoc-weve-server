@@ -22,5 +22,9 @@ public class Appreciate extends BaseEntity {
 
     private String audioUrl;
 
-    public boolean isRead;
+    private boolean isRead;
+    public void setAsRead(){
+        this.isRead = true;
+    }
+
 }
