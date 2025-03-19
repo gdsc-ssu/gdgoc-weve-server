@@ -10,7 +10,7 @@ import java.util.Date;
 @Component
 public class JwtUtil {
     private static final String SECRET_KEY = "YourSuperSecretKeyForJWTGenerationYourSuperSecretKey";
-    private static final long EXPIRATION_TIME = 86400000; // 24시간
+    private static final long EXPIRATION_TIME = 30L * 24 * 60 * 60 * 1000;  // 한 달
 
     private final SecretKey key = Keys.hmacShaKeyFor(SECRET_KEY.getBytes());
 

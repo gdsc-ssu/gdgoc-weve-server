@@ -2,6 +2,7 @@ package com.weve.controller;
 
 import com.weve.common.api.payload.BasicResponse;
 import com.weve.common.api.payload.code.status.ErrorStatus;
+import com.weve.dto.request.LoginRequestDto;
 import com.weve.dto.request.UserRequestDto;
 import com.weve.service.AuthService;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -43,7 +44,7 @@ public class AuthController {
 
     // 로그인
     @PostMapping("/login")
-    public BasicResponse<?> login(@RequestBody UserRequestDto request) {
+    public BasicResponse<?> login(@RequestBody LoginRequestDto request) {
 
         // 전화번호 및 이름 필수 체크
         if (request.getPhoneNumber() == null || request.getPhoneNumber().isBlank()) {

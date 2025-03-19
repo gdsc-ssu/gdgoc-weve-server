@@ -8,6 +8,7 @@ import com.weve.domain.User;
 import com.weve.domain.enums.HardshipCategory;
 import com.weve.domain.enums.JobCategory;
 import com.weve.domain.enums.ValueCategory;
+import com.weve.dto.gemini.ExtractedCategoriesFromText;
 import com.weve.dto.request.PatchMypageRequest;
 import com.weve.dto.request.SeniorInfoRequest;
 import com.weve.dto.response.MypageResponse;
@@ -97,21 +98,17 @@ public class UserService {
 
         // 정보 받아서 텍스트 분석 후 카테고리 분류 (User 테이블 저장)
         // Gemini 서비스에 있는 analyzeText() 이용
-        String newJob = request.getJob();
-        String newValue = request.getValue();
-        String newHardship = request.getHardship();
-        String prompt = newJob + newValue + newHardship;
-
-        // 텍스트 분석 후 카테고리 분류 (세 번 호출하는 방식)
-        JobCategory jobResult = geminiService.analyzeText(prompt).getJob();
-        ValueCategory valueResult = geminiService.analyzeText(prompt).getValue();
-        HardshipCategory hardshipResult = geminiService.analyzeText(prompt).getHardship();
-        log.info(String.valueOf(jobResult));
-        log.info(String.valueOf(valueResult));
-        log.info(String.valueOf(hardshipResult));
+        String prompt = request.getJob() + request.getValue() + request.getHardship();
+        ExtractedCategoriesFromText categories = geminiService.analyzeText(prompt);
 
         // MatchingInfo 객체 생성
-        MatchingInfo matchingInfo = new MatchingInfo(jobResult, valueResult, hardshipResult);
+        MatchingInfo matchingInfo = MatchingInfo.builder()
+                .job(categories.getJob())
+                .value(categories.getValue())
+                .hardship(categories.getHardship())
+                .build();
+
+        log.info(matchingInfo.toString());
 
         // 분석된 것을 User 테이블에 저장
         User newUser = user.toBuilder()
