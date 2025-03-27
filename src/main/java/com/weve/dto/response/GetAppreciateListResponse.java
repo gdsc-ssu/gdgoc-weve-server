@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Builder
@@ -16,6 +17,6 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class GetAppreciateListResponse {
 
-    private List<Appreciate> new_appreciate;
-    private List<Appreciate> read_appreciate;
+    private List<AppreciateDto> new_appreciate;
+    private List<AppreciateDto> read_appreciate;
 }

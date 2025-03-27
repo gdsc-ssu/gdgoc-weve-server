@@ -7,6 +7,7 @@ import com.weve.domain.Appreciate;
 import com.weve.domain.User;
 import com.weve.domain.Worry;
 import com.weve.dto.request.PostAppreciateRequest;
+import com.weve.dto.response.AppreciateDto;
 import com.weve.dto.response.GetAppreciateListResponse;
 import com.weve.dto.response.GetAppreciateResponse;
 import com.weve.repository.AppreciateRepository;
@@ -90,17 +91,25 @@ public class AppreciateService {
 
     // 감사편지 목록 조회
     public BasicResponse<GetAppreciateListResponse> getAppreciateList(String username) {
-
         User user = userService.findByPhoneNumber(username);
 
         List<Appreciate> newAppreciate = appreciateRepository.findByWorry_Answer_SeniorAndIsReadIsFalse(user);
         List<Appreciate> readAppreciate = appreciateRepository.findByWorry_Answer_SeniorAndIsReadIsTrue(user);
 
+        List<AppreciateDto> newDtoList = newAppreciate.stream()
+                .map(AppreciateDto::from)
+                .toList();
+
+        List<AppreciateDto> readDtoList = readAppreciate.stream()
+                .map(AppreciateDto::from)
+                .toList();
+
         GetAppreciateListResponse response = GetAppreciateListResponse.builder()
-                .new_appreciate(newAppreciate)
-                .read_appreciate(readAppreciate)
+                .new_appreciate(newDtoList)
+                .read_appreciate(readDtoList)
                 .build();
 
         return BasicResponse.onSuccess(response);
     }
+
 }
