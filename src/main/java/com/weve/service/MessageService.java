@@ -51,7 +51,7 @@ public class MessageService {
     @Transactional
     public String sendSMS(String phoneNumber) {
         String randomNum = createRandomNumber();
-        System.out.println("생성된 인증번호: " + randomNum);
+        log.info("생성된 인증번호: " + randomNum);
 
         // SMS 객체 생성
         Message message = new Message();
@@ -62,7 +62,7 @@ public class MessageService {
 
         try {
             SingleMessageSentResponse response = messageService.sendOne(new SingleMessageSendingRequest(message));
-            System.out.println("SMS 전송 성공: " + response);
+            log.info("SMS 전송 성공: " + response);
 
             // MySQL에 인증번호 저장 (기존 번호 갱신)
             Optional<User> user = userRepository.findByPhoneNumber(phoneNumber);
@@ -83,7 +83,7 @@ public class MessageService {
 
             return "문자 전송이 완료되었습니다.";
         } catch (Exception e) {
-            System.err.println("SMS 전송 실패: " + e.getMessage());
+            log.info("SMS 전송 실패: " + e.getMessage());
             return "문자 전송 실패";
         }
     }
