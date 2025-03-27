@@ -26,4 +26,16 @@ public class Sms extends BaseEntity {
 
     @Column
     private LocalDateTime smsCodeExpiry;
+
+    // smsCode 갱신
+    public void updatesmsCode(String code, LocalDateTime expiry) {
+        this.smsCode = code;
+        this.smsCodeExpiry = expiry;
+    }
+
+    // smsCode 초기화
+    public void clearSmsCode() {
+        this.smsCode = null;
+        this.smsCodeExpiry = null;
+    }
 }
