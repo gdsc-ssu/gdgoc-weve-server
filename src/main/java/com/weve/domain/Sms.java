@@ -21,9 +21,6 @@ public class Sms extends BaseEntity {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @Column(name = "phone_number", nullable = false)
-    private String phoneNumber;
-
     @Column
     private String smsCode;
 
