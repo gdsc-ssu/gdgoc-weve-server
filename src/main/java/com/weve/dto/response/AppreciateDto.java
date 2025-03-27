@@ -19,6 +19,7 @@ public class AppreciateDto {
                 .id(appreciate.getId())
                 .content(appreciate.getContent())
                 .isRead(appreciate.isRead())
+                .createdAt(appreciate.getCreatedAt())
                 .build();
     }
 }
