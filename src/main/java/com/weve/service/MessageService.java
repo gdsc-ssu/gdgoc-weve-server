@@ -1,6 +1,8 @@
 package com.weve.service;
 
+import com.weve.domain.Sms;
 import com.weve.domain.User;
+import com.weve.repository.SmsRepository;
 import com.weve.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,6 +29,7 @@ public class MessageService {
 
     private final DefaultMessageService messageService; // DefaultMessageService 주입
     private final UserRepository userRepository;
+    private final SmsRepository smsRepository;
 
     @Value("${coolsms.apikey}")
     private String apiKey;
@@ -51,9 +54,8 @@ public class MessageService {
     @Transactional
     public String sendSMS(String phoneNumber) {
         String randomNum = createRandomNumber();
-        System.out.println("생성된 인증번호: " + randomNum);
+        log.info("생성된 인증번호: " + randomNum);
 
-        // SMS 객체 생성
         Message message = new Message();
         message.setFrom(fromNumber);
         message.setTo(phoneNumber);
@@ -62,44 +64,46 @@ public class MessageService {
 
         try {
             SingleMessageSentResponse response = messageService.sendOne(new SingleMessageSendingRequest(message));
-            System.out.println("SMS 전송 성공: " + response);
+            log.info("SMS 전송 성공: " + response);
 
-            // MySQL에 인증번호 저장 (기존 번호 갱신)
-            Optional<User> user = userRepository.findByPhoneNumber(phoneNumber);
-            if (user.isPresent()) {
-                User updatedUser = user.get().toBuilder()
-                        .smsCode(randomNum)
-                        .smsCodeExpiry(LocalDateTime.now().plusMinutes(5))  // 5분제한
-                        .build();
-                userRepository.save(updatedUser);
+            // 사용자 조회
+            Optional<User> userOpt = userRepository.findByPhoneNumber(phoneNumber);
+            if (userOpt.isEmpty()) {
+                log.warn("해당 전화번호를 가진 유저가 존재하지 않습니다.");
+                return "해당 유저가 존재하지 않습니다.";
+            }
+            User user = userOpt.get();
+
+            // Sms 정보 업데이트
+            Optional<Sms> smsOpt = smsRepository.findByUserPhoneNumber(phoneNumber);
+            if (smsOpt.isPresent()) {
+                Sms sms = smsOpt.get();
+                sms.updatesmsCode(randomNum, LocalDateTime.now().plusMinutes(5));
             } else {
-                User newUser = User.builder()
-                        .phoneNumber(phoneNumber)
+                Sms sms = Sms.builder()
+                        .user(user)
                         .smsCode(randomNum)
                         .smsCodeExpiry(LocalDateTime.now().plusMinutes(5))
                         .build();
-                userRepository.save(newUser);
+                smsRepository.save(sms);
             }
 
             return "문자 전송이 완료되었습니다.";
         } catch (Exception e) {
-            System.err.println("SMS 전송 실패: " + e.getMessage());
+            log.info("SMS 전송 실패: " + e.getMessage());
             return "문자 전송 실패";
         }
     }
 
     // 인증번호 검증
     public boolean verifySMSCode(String phoneNumber, String inputCode) {
-        Optional<User> user = userRepository.findByPhoneNumber(phoneNumber);
-        if (user.isPresent()) {
-            User foundUser = user.get();
-            if (foundUser.getSmsCode().equals(inputCode) &&
-                    foundUser.getSmsCodeExpiry().isAfter(LocalDateTime.now())) {
-                User updatedUser = foundUser.toBuilder()
-                        .smsCode(null)
-                        .smsCodeExpiry(null)
-                        .build();
-                userRepository.save(updatedUser);
+        Optional<Sms> smsOpt = smsRepository.findByUserPhoneNumber(phoneNumber);
+        if (smsOpt.isPresent()) {
+            Sms sms = smsOpt.get();
+            if (sms.getSmsCode().equals(inputCode) &&
+                    sms.getSmsCodeExpiry().isAfter(LocalDateTime.now())) {
+                sms.clearSmsCode(); // code, expiry 초기화
+                smsRepository.save(sms);
                 return true;
             }
         }

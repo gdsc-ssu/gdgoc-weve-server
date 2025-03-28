@@ -49,10 +49,4 @@ public class User extends BaseEntity {
 
     @Embedded
     private MatchingInfo matchingInfo;
-
-    @Column
-    private String smsCode;
-
-    @Column
-    private LocalDateTime smsCodeExpiry;
 }
