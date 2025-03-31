@@ -70,7 +70,7 @@ public class MessageService {
             Optional<User> userOpt = userRepository.findByPhoneNumber(phoneNumber);
             if (userOpt.isEmpty()) {
                 log.warn("해당 전화번호를 가진 유저가 존재하지 않습니다.");
-                return "해당 유저가 존재하지 않습니다.";
+                //return "해당 유저가 존재하지 않습니다.";
             }
             User user = userOpt.get();
 
