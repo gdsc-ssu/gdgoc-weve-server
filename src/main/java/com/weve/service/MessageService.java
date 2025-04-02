@@ -113,6 +113,11 @@ public class MessageService {
 
     // 인증번호 검증
     public boolean verifySMSCode(String phoneNumber, String inputCode) {
+        if (phoneNumber.startsWith(" ")) {
+            phoneNumber = phoneNumber.replaceFirst(" ", "+");
+        }
+        log.info("인증번호 검증 입력 전화번호: " + phoneNumber);
+
         Optional<Sms> smsOpt = smsRepository.findByUserPhoneNumber(phoneNumber);
         if (smsOpt.isPresent()) {
             Sms sms = smsOpt.get();
@@ -122,6 +127,8 @@ public class MessageService {
                 smsRepository.save(sms);
                 return true;
             }
+        } else {
+            log.warn("인증번호 검증: 유저가 존재하지 않습니다.");
         }
         return false;
     }
