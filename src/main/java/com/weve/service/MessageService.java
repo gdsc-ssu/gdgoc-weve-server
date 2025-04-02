@@ -17,6 +17,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.Random;
@@ -30,6 +32,7 @@ public class MessageService {
     private final DefaultMessageService messageService; // DefaultMessageService 주입
     private final UserRepository userRepository;
     private final SmsRepository smsRepository;
+    private final AuthService authService; // 국가번호 파싱용
 
     @Value("${coolsms.apikey}")
     private String apiKey;
@@ -53,12 +56,21 @@ public class MessageService {
     // 인증번호 전송 & MySQL에 저장
     @Transactional
     public String sendSMS(String phoneNumber) {
+
+        // phoneNumber = +82 01000000000의 형태
+        // 국가번호 파싱
+        String encodedPhone = encodePhoneNumber(phoneNumber); // + → %2B 변환
+        log.info("인코딩된 전화번호: {}", encodedPhone);
+
+        String parsedPhoneNumber = authService.extractPhoneNumber(phoneNumber);
+        log.info("파싱된 전화번호: " + parsedPhoneNumber);
+
         String randomNum = createRandomNumber();
         log.info("생성된 인증번호: " + randomNum);
 
         Message message = new Message();
         message.setFrom(fromNumber);
-        message.setTo(phoneNumber);
+        message.setTo(parsedPhoneNumber);
         message.setType(MessageType.SMS);
         message.setText("[인증번호] " + randomNum);
 
@@ -67,7 +79,11 @@ public class MessageService {
             log.info("SMS 전송 성공: " + response);
 
             // 사용자 조회
+            if (phoneNumber.startsWith(" ")) {
+                phoneNumber = phoneNumber.replaceFirst(" ", "+");
+            }
             Optional<User> userOpt = userRepository.findByPhoneNumber(phoneNumber);
+            log.info("입력된 전화번호: " + phoneNumber);
             if (userOpt.isEmpty()) {
                 log.warn("해당 전화번호를 가진 유저가 존재하지 않습니다.");
                 //return "해당 유저가 존재하지 않습니다.";
@@ -108,5 +124,11 @@ public class MessageService {
             }
         }
         return false;
+    }
+
+
+    // 전화번호 인코딩
+    public String encodePhoneNumber(String phoneNumber) {
+        return URLEncoder.encode(phoneNumber, StandardCharsets.UTF_8);
     }
 }

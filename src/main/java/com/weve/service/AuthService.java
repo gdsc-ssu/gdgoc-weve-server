@@ -2,6 +2,7 @@ package com.weve.service;
 
 // 인증 서비스 (로그인하고 jwt 생성)
 
+import com.fasterxml.jackson.databind.deser.DataFormatReaders;
 import com.weve.domain.User;
 import com.weve.domain.enums.Language;
 import com.weve.domain.enums.UserType;
@@ -65,7 +66,7 @@ public class AuthService {
     );
 
     // 국가 코드 추출
-    public static final Pattern PHONE_PATTERN = Pattern.compile("^(\\+\\d{1,3})\\s?\\d+");
+    public static final Pattern PHONE_PATTERN = Pattern.compile("^(\\+\\d{1,3})[\\s-]?(0\\d+)");
 
     public String extractCountryCode(String phoneNumber) {
         Matcher matcher = PHONE_PATTERN.matcher(phoneNumber);
@@ -73,5 +74,19 @@ public class AuthService {
             return matcher.group(1); // 국가 코드 반환
         }
         return ""; // 기본값
+    }
+
+    // 국가번호 제외한 전화번호 추출
+    public String extractPhoneNumber(String phoneNumber) {
+        // 모든 공백, 하이픈 제거
+        String cleaned = phoneNumber.replaceAll("[\\s\\-]", "");
+
+        // "+82"로 시작하면 잘라내기
+        if (cleaned.startsWith("+82")) {
+            return cleaned.substring(3); // → 01012345678
+        } else if (cleaned.startsWith("82")) {
+            return cleaned.substring(2); // → 01012345678
+        }
+        return cleaned; // 그 외의 경우는 그대로 반환
     }
 }
