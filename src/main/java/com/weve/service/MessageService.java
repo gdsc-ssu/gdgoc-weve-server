@@ -1,7 +1,9 @@
 package com.weve.service;
 
+import com.weve.common.api.payload.BasicResponse;
 import com.weve.domain.Sms;
 import com.weve.domain.User;
+import com.weve.dto.response.VerificationResponse;
 import com.weve.repository.SmsRepository;
 import com.weve.repository.UserRepository;
 import com.weve.security.JwtUtil;
@@ -19,12 +21,14 @@ import org.springframework.transaction.annotation.Transactional;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
 
 @Slf4j
 @Service
-@Transactional(readOnly = true)
+@Transactional
 @RequiredArgsConstructor
 public class MessageService {
 
@@ -56,17 +60,15 @@ public class MessageService {
     // 인증번호 전송 & MySQL에 저장
     @Transactional
     public String sendSMS(String phoneNumber) {
-
-        // phoneNumber = +82 01000000000의 형태
-        // 국가번호 파싱
-        String encodedPhone = encodePhoneNumber(phoneNumber); // + → %2B 변환
-        log.info("인코딩된 전화번호: {}", encodedPhone);
+        if (phoneNumber.startsWith(" ")) {
+            phoneNumber = phoneNumber.replaceFirst(" ", "+");
+        }
 
         String parsedPhoneNumber = authService.extractPhoneNumber(phoneNumber);
-        log.info("파싱된 전화번호: " + parsedPhoneNumber);
+        log.info("파싱된 전화번호: {}", parsedPhoneNumber);
 
         String randomNum = createRandomNumber();
-        log.info("생성된 인증번호: " + randomNum);
+        log.info("생성된 인증번호: {}", randomNum);
 
         Message message = new Message();
         message.setFrom(fromNumber);
@@ -76,64 +78,76 @@ public class MessageService {
 
         try {
             SingleMessageSentResponse response = messageService.sendOne(new SingleMessageSendingRequest(message));
-            log.info("SMS 전송 성공: " + response);
-
-            // 사용자 조회
-            if (phoneNumber.startsWith(" ")) {
-                phoneNumber = phoneNumber.replaceFirst(" ", "+");
-            }
-            Optional<User> userOpt = userRepository.findByPhoneNumber(phoneNumber);
-            log.info("입력된 전화번호: " + phoneNumber);
-            if (userOpt.isEmpty()) {
-                log.warn("해당 전화번호를 가진 유저가 존재하지 않습니다.");
-                //return "해당 유저가 존재하지 않습니다.";
-            }
-            User user = userOpt.get();
-
-            // Sms 정보 업데이트
-            Optional<Sms> smsOpt = smsRepository.findByUserPhoneNumber(phoneNumber);
-            if (smsOpt.isPresent()) {
-                Sms sms = smsOpt.get();
-                sms.updatesmsCode(randomNum, LocalDateTime.now().plusMinutes(5));
-            } else {
-                Sms sms = Sms.builder()
-                        .user(user)
-                        .smsCode(randomNum)
-                        .smsCodeExpiry(LocalDateTime.now().plusMinutes(5))
-                        .build();
-                smsRepository.save(sms);
-            }
-
-            return "문자 전송이 완료되었습니다.";
+            log.info("SMS 전송 성공: {}", response);
+            return null;
         } catch (Exception e) {
-            log.info("SMS 전송 실패: " + e.getMessage());
+            log.error("SMS 전송 실패: {}", e.getMessage());
             return "문자 전송 실패";
         }
     }
 
     // 인증번호 검증
-    public String verifySMSCode(String phoneNumber, String inputCode) {
+    public BasicResponse<VerificationResponse> verifySMSCode(String phoneNumber, String inputCode) {
+        boolean isNew = false;
+        String token = null; // token 변수 선언 및 초기화
+
+        // 전화번호 형식 정규화
         if (phoneNumber.startsWith(" ")) {
             phoneNumber = phoneNumber.replaceFirst(" ", "+");
         }
 
-        Optional<Sms> smsOpt = smsRepository.findByUserPhoneNumber(phoneNumber);
-        if (smsOpt.isPresent()) {
-            Sms sms = smsOpt.get();
-            if (sms.getSmsCode().equals(inputCode) &&
-                    sms.getSmsCodeExpiry().isAfter(LocalDateTime.now())) {
+        // 사용자 조회
+        Optional<User> userOpt = userRepository.findByPhoneNumber(phoneNumber);
+        User user;
 
-                sms.clearSmsCode();
-                smsRepository.save(sms);
-
-                return userRepository.findByPhoneNumber(phoneNumber)
-                        .map(user -> jwtUtil.generateToken(user.getPhoneNumber()))
-                        .orElse("유저 없음");
-            }
+        if (userOpt.isEmpty()) {
+            // 사용자가 존재하지 않으면 유저 새로 추가
+            user = User.builder()
+                    .phoneNumber(phoneNumber)
+                    .build();
+            user = userRepository.save(user);
+            isNew = true;
+        } else {
+            user = userOpt.get();
         }
-        return "인증 실패";
-    }
 
+        // 인증번호 정보 조회
+        Optional<Sms> smsOpt = smsRepository.findByUserPhoneNumber(phoneNumber);
+        Sms sms;
+
+        if (smsOpt.isPresent()) {
+            sms = smsOpt.get();
+            // 인증번호 및 만료시간 업데이트
+            sms = sms.toBuilder()
+                    .smsCode(inputCode)
+                    .smsCodeExpiry(LocalDateTime.now().plusMinutes(5))
+                    .build();
+        } else {
+            // 새로운 인증번호 정보 생성
+            sms = Sms.builder()
+                    .user(user)
+                    .smsCode(inputCode)
+                    .smsCodeExpiry(LocalDateTime.now().plusMinutes(5))
+                    .build();
+        }
+        smsRepository.save(sms);
+
+        // 인증번호 검증
+        if (sms.getSmsCode().equals(inputCode) && sms.getSmsCodeExpiry().isAfter(LocalDateTime.now())) {
+            // 인증 성공 시, 토큰 생성
+            token = jwtUtil.generateToken(user.getPhoneNumber());
+        } else {
+            log.warn("error: 인증 실패");
+            return BasicResponse.onFailure("401", "인증번호가 일치하지 않거나 만료되었습니다.", null);
+        }
+
+        VerificationResponse verificationResponse = VerificationResponse.builder()
+                .token(token)
+                .isNew(isNew)
+                .build();
+
+        return BasicResponse.onSuccess(verificationResponse);
+    }
 
     // 전화번호 인코딩
     public String encodePhoneNumber(String phoneNumber) {
