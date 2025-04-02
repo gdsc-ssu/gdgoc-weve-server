@@ -4,6 +4,7 @@ import com.weve.domain.Sms;
 import com.weve.domain.User;
 import com.weve.repository.SmsRepository;
 import com.weve.repository.UserRepository;
+import com.weve.security.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.nurigo.sdk.message.model.Message;
@@ -12,8 +13,6 @@ import net.nurigo.sdk.message.request.SingleMessageSendingRequest;
 import net.nurigo.sdk.message.response.SingleMessageSentResponse;
 import net.nurigo.sdk.message.service.DefaultMessageService;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cglib.core.Local;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,6 +32,7 @@ public class MessageService {
     private final UserRepository userRepository;
     private final SmsRepository smsRepository;
     private final AuthService authService; // 국가번호 파싱용
+    private final JwtUtil jwtUtil;
 
     @Value("${coolsms.apikey}")
     private String apiKey;
@@ -112,25 +112,26 @@ public class MessageService {
     }
 
     // 인증번호 검증
-    public boolean verifySMSCode(String phoneNumber, String inputCode) {
+    public String verifySMSCode(String phoneNumber, String inputCode) {
         if (phoneNumber.startsWith(" ")) {
             phoneNumber = phoneNumber.replaceFirst(" ", "+");
         }
-        log.info("인증번호 검증 입력 전화번호: " + phoneNumber);
 
         Optional<Sms> smsOpt = smsRepository.findByUserPhoneNumber(phoneNumber);
         if (smsOpt.isPresent()) {
             Sms sms = smsOpt.get();
             if (sms.getSmsCode().equals(inputCode) &&
                     sms.getSmsCodeExpiry().isAfter(LocalDateTime.now())) {
-                sms.clearSmsCode(); // code, expiry 초기화
+
+                sms.clearSmsCode();
                 smsRepository.save(sms);
-                return true;
+
+                return userRepository.findByPhoneNumber(phoneNumber)
+                        .map(user -> jwtUtil.generateToken(user.getPhoneNumber()))
+                        .orElse("유저 없음");
             }
-        } else {
-            log.warn("인증번호 검증: 유저가 존재하지 않습니다.");
         }
-        return false;
+        return "인증 실패";
     }
 
 

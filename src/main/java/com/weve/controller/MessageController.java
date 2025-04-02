@@ -39,18 +39,24 @@ public class MessageController {
 
     // 인증번호 검증
     @GetMapping("/verify")
-    public BasicResponse<Boolean> verifySMSCode(@RequestParam String phone, @RequestParam String code) {
-        // 예외 처리 한 버전
+    public BasicResponse<String> verifySMSCode(@RequestParam String phone, @RequestParam String code) {
         try {
-            boolean isValid = messageService.verifySMSCode(phone, code);
-            if (isValid) {
-                return BasicResponse.onSuccess(true);
-            } else {
-                return BasicResponse.onFailure("401", "인증 실패", false);
+            String result = messageService.verifySMSCode(phone, code);
+
+            switch (result) {
+                case "인증 실패":
+                    return BasicResponse.onFailure("401", "인증번호가 일치하지 않거나 만료되었습니다.", null);
+
+                case "유저 없음":
+                    return BasicResponse.onFailure("404", "해당 유저가 존재하지 않습니다.", null);
+
+                default:
+                    return BasicResponse.onSuccess(null);
             }
+
         } catch (Exception e) {
             log.error("문자인증 검증 중 오류 발생: {}", e.getMessage());
-            return BasicResponse.onFailure("500", "서버 오류", false);
+            return BasicResponse.onFailure("500", "서버 오류가 발생했습니다.", null);
         }
     }
 }
