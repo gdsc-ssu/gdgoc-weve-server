@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -39,24 +40,24 @@ public class MessageController {
 
     // 인증번호 검증
     @GetMapping("/verify")
-    public BasicResponse<String> verifySMSCode(@RequestParam String phone, @RequestParam String code) {
+    public BasicResponse<Map<String, String>> verifySMSCode(@RequestParam String phone, @RequestParam String code) {
         try {
             String result = messageService.verifySMSCode(phone, code);
 
             switch (result) {
                 case "인증 실패":
                     return BasicResponse.onFailure("401", "인증번호가 일치하지 않거나 만료되었습니다.", null);
-
                 case "유저 없음":
                     return BasicResponse.onFailure("404", "해당 유저가 존재하지 않습니다.", null);
-
                 default:
-                    return BasicResponse.onSuccess(null);
+                    // JWT 토큰 반환
+                    Map<String, String> tokenMap = Map.of("token", result);
+                    return BasicResponse.onSuccess(tokenMap);
             }
-
         } catch (Exception e) {
             log.error("문자인증 검증 중 오류 발생: {}", e.getMessage());
             return BasicResponse.onFailure("500", "서버 오류가 발생했습니다.", null);
         }
     }
+
 }
