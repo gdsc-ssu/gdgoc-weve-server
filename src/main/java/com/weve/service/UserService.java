@@ -74,7 +74,11 @@ public class UserService {
         String newPhoneNumber = request.getPhoneNumber() != null ? request.getPhoneNumber() : user.getPhoneNumber();
 
         String newCountryCode = authService.extractCountryCode(newPhoneNumber);
-        String newNationality = authService.COUNTRY_NATIONALITY_MAP.getOrDefault(newCountryCode, user.getNationality());
+//        String newNationality = authService.COUNTRY_NATIONALITY_MAP.getOrDefault(newCountryCode, user.getNationality());
+
+        String newNationality = AuthService.COUNTRY_NATIONALITY_MAP.containsKey(newCountryCode)
+                ? AuthService.COUNTRY_NATIONALITY_MAP.get(newCountryCode)
+                : user.getNationality();
 
         // 프로필 이미지 설정을 위한 유저 타입 검사
         ProfileColor profileColor;

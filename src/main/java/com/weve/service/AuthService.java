@@ -83,7 +83,7 @@ public class AuthService {
     );
 
     // 국가 코드 추출
-    public static final Pattern PHONE_PATTERN = Pattern.compile("^(\\+\\d{1,3})[\\s-]?(0\\d+)");
+    public static final Pattern PHONE_PATTERN = Pattern.compile("^(\\+\\d{1,3})");
 
     public String extractCountryCode(String phoneNumber) {
         Matcher matcher = PHONE_PATTERN.matcher(phoneNumber);
