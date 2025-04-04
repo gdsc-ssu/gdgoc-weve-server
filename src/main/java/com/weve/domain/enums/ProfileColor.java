@@ -1,7 +1,7 @@
 package com.weve.domain.enums;
 
 public enum ProfileColor {
-    YELLO, // 주니어
+    YELLOW, // 주니어
     GREEN, // 주니어
     ORANGE, // 시니어
     BLUE, // 시니어

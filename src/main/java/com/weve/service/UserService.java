@@ -5,9 +5,7 @@ import com.weve.common.api.payload.BasicResponse;
 import com.weve.common.api.payload.code.status.ErrorStatus;
 import com.weve.domain.MatchingInfo;
 import com.weve.domain.User;
-import com.weve.domain.enums.HardshipCategory;
-import com.weve.domain.enums.JobCategory;
-import com.weve.domain.enums.ValueCategory;
+import com.weve.domain.enums.*;
 import com.weve.dto.gemini.ExtractedCategoriesFromText;
 import com.weve.dto.request.PatchMypageRequest;
 import com.weve.dto.request.SeniorInfoRequest;
@@ -18,6 +16,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Random;
 
 import static com.weve.domain.enums.UserType.JUNIOR;
 import static com.weve.domain.enums.UserType.SENIOR;
@@ -76,12 +76,25 @@ public class UserService {
         String newCountryCode = authService.extractCountryCode(newPhoneNumber);
         String newNationality = authService.COUNTRY_NATIONALITY_MAP.getOrDefault(newCountryCode, user.getNationality());
 
+        // 프로필 이미지 설정을 위한 유저 타입 검사
+        ProfileColor profileColor;
+        if (user.getUserType() == UserType.SENIOR) {
+            // 시니어: ORANGE, BLUE, PINK 중 랜덤 선택
+            ProfileColor[] seniorColors = {ProfileColor.ORANGE, ProfileColor.BLUE, ProfileColor.PINK};
+            profileColor = seniorColors[new Random().nextInt(seniorColors.length)];
+        } else {
+            // 주니어: YELLOW, GREEN 중 랜덤 선택
+            ProfileColor[] juniorColors = {ProfileColor.YELLOW, ProfileColor.GREEN};
+            profileColor = juniorColors[new Random().nextInt(juniorColors.length)];
+        }
+
         User patchedUser = user.toBuilder()
                 .name(request.getName() != null ? request.getName() : user.getName())
                 .birth(request.getBirth() != null ? request.getBirth() : user.getBirth())
                 .phoneNumber(newPhoneNumber)
                 .language((request.getLanguage() != null ? request.getLanguage() : user.getLanguage()))
                 .nationality(newNationality)
+                .profileColor(profileColor)
                 .build();
 
         userRepository.save(patchedUser);
