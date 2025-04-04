@@ -49,4 +49,7 @@ public class User extends BaseEntity {
 
     @Embedded
     private MatchingInfo matchingInfo;
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private Sms sms;
 }

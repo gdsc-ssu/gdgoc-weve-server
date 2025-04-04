@@ -3,6 +3,7 @@ package com.weve.service;
 // 인증 서비스 (로그인하고 jwt 생성)
 
 import com.fasterxml.jackson.databind.deser.DataFormatReaders;
+import com.weve.common.api.payload.BasicResponse;
 import com.weve.domain.User;
 import com.weve.domain.enums.Language;
 import com.weve.domain.enums.UserType;
@@ -88,5 +89,13 @@ public class AuthService {
             return cleaned.substring(2); // → 01012345678
         }
         return cleaned; // 그 외의 경우는 그대로 반환
+    }
+
+    // 회원 탈퇴
+    public void withdrawUser(String username) {
+
+        User user = userRepository.findByPhoneNumber(username)
+                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+        userRepository.delete(user);
     }
 }

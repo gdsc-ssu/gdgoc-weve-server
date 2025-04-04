@@ -8,6 +8,8 @@ import com.weve.service.AuthService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.persistence.Basic;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -62,4 +64,15 @@ public class AuthController {
 
         return BasicResponse.onSuccess(token);
     }
+
+    // 회원 탈퇴
+    @DeleteMapping("/withdraw")
+    public BasicResponse<?> withdrawUser(@AuthenticationPrincipal UserDetails userDetails) {
+
+        String username = userDetails.getUsername();
+        authService.withdrawUser(username);
+
+        return BasicResponse.onSuccess(null);
+    }
+
 }
