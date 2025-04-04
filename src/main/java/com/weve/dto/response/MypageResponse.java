@@ -3,6 +3,7 @@ package com.weve.dto.response;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.weve.domain.User;
 import com.weve.domain.enums.Language;
+import com.weve.domain.enums.ProfileColor;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -24,6 +25,7 @@ public class MypageResponse {
     private Language language;
     private String phoneNumber;
     private String userType;
+    private ProfileColor profileColor;
 
     public static MypageResponse fromUser(User user) {
         return MypageResponse.builder()
@@ -34,6 +36,7 @@ public class MypageResponse {
                 .language(user.getLanguage())
                 .phoneNumber(user.getPhoneNumber())
                 .userType(user.getUserType().name()) // String 변환
+                .profileColor(user.getProfileColor())
                 .build();
     }
 
