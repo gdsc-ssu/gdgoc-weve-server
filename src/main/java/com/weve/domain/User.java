@@ -3,6 +3,7 @@ package com.weve.domain;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.weve.domain.common.BaseEntity;
 import com.weve.domain.enums.Language;
+import com.weve.domain.enums.ProfileColor;
 import com.weve.domain.enums.UserType;
 import jakarta.persistence.*;
 import lombok.*;
@@ -49,4 +50,10 @@ public class User extends BaseEntity {
 
     @Embedded
     private MatchingInfo matchingInfo;
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private Sms sms;
+
+    @Enumerated(EnumType.STRING)
+    private ProfileColor profileColor;
 }

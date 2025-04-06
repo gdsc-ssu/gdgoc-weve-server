@@ -3,8 +3,10 @@ package com.weve.service;
 // 인증 서비스 (로그인하고 jwt 생성)
 
 import com.fasterxml.jackson.databind.deser.DataFormatReaders;
+import com.weve.common.api.payload.BasicResponse;
 import com.weve.domain.User;
 import com.weve.domain.enums.Language;
+import com.weve.domain.enums.ProfileColor;
 import com.weve.domain.enums.UserType;
 import com.weve.repository.UserRepository;
 import com.weve.security.JwtUtil;
@@ -15,8 +17,11 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static com.weve.domain.enums.UserType.SENIOR;
 
 @Service
 @RequiredArgsConstructor
@@ -37,6 +42,17 @@ public class AuthService {
         String countryCode = extractCountryCode(phoneNumber);
         String nationality = COUNTRY_NATIONALITY_MAP.getOrDefault(countryCode, "Unknown");
 
+        ProfileColor profileColor;
+        if (userType == SENIOR) {
+            // 시니어: ORANGE, BLUE, PINK 중 랜덤 선택
+            ProfileColor[] seniorColors = {ProfileColor.ORANGE, ProfileColor.BLUE, ProfileColor.PINK};
+            profileColor = seniorColors[new Random().nextInt(seniorColors.length)];
+        } else {
+            // 주니어: YELLOW, GREEN 중 랜덤 선택
+            ProfileColor[] juniorColors = {ProfileColor.YELLOW, ProfileColor.GREEN};
+            profileColor = juniorColors[new Random().nextInt(juniorColors.length)];
+        }
+
         User newUser = User.builder()
                 .name(name)
                 .phoneNumber(phoneNumber)
@@ -44,6 +60,7 @@ public class AuthService {
                 .userType(userType)
                 .language(language)
                 .nationality(nationality)
+                .profileColor(profileColor)
                 .build();
 
         userRepository.save(newUser);
@@ -66,7 +83,7 @@ public class AuthService {
     );
 
     // 국가 코드 추출
-    public static final Pattern PHONE_PATTERN = Pattern.compile("^(\\+\\d{1,3})[\\s-]?(0\\d+)");
+    public static final Pattern PHONE_PATTERN = Pattern.compile("^(\\+\\d{1,3})");
 
     public String extractCountryCode(String phoneNumber) {
         Matcher matcher = PHONE_PATTERN.matcher(phoneNumber);
@@ -88,5 +105,13 @@ public class AuthService {
             return cleaned.substring(2); // → 01012345678
         }
         return cleaned; // 그 외의 경우는 그대로 반환
+    }
+
+    // 회원 탈퇴
+    public void withdrawUser(String username) {
+
+        User user = userRepository.findByPhoneNumber(username)
+                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+        userRepository.delete(user);
     }
 }
