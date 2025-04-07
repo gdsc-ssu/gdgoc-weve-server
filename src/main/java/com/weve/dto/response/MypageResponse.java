@@ -16,7 +16,7 @@ import java.time.Period;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonInclude(JsonInclude.Include.ALWAYS)  // null 값 같이 반환
 public class MypageResponse {
     private String name;
     private String nationality;
