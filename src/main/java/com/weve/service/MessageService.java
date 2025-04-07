@@ -3,6 +3,7 @@ package com.weve.service;
 import com.weve.common.api.payload.BasicResponse;
 import com.weve.domain.Sms;
 import com.weve.domain.User;
+import com.weve.domain.enums.ProfileColor;
 import com.weve.dto.response.VerificationResponse;
 import com.weve.repository.SmsRepository;
 import com.weve.repository.UserRepository;
@@ -25,6 +26,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
+
+import static com.weve.domain.enums.UserType.SENIOR;
 
 @Slf4j
 @Service
@@ -100,10 +103,16 @@ public class MessageService {
         Optional<User> userOpt = userRepository.findByPhoneNumber(phoneNumber);
         User user;
 
+        // 프로필 컬러 추가
+        ProfileColor profileColor;
+        ProfileColor[] seniorColors = {ProfileColor.ORANGE, ProfileColor.BLUE, ProfileColor.PINK};
+        profileColor = seniorColors[new Random().nextInt(seniorColors.length)];
+
         if (userOpt.isEmpty()) {
             // 사용자가 존재하지 않으면 유저 새로 추가
             user = User.builder()
                     .phoneNumber(phoneNumber)
+                    .profileColor(profileColor)
                     .build();
             user = userRepository.save(user);
             isNew = true;
