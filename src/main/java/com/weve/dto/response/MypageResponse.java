@@ -35,7 +35,7 @@ public class MypageResponse {
                 .age(user.getBirth() != null ? calculateAge(user.getBirth()) : 0)
                 .language(user.getLanguage())
                 .phoneNumber(user.getPhoneNumber())
-                .userType(user.getUserType().name()) // String 변환
+                .userType(user.getUserType() != null ? user.getUserType().name() : null)
                 .profileColor(user.getProfileColor())
                 .build();
     }
