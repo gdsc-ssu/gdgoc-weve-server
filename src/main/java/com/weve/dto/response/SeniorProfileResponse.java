@@ -28,6 +28,7 @@ public class SeniorProfileResponse {
 
         return SeniorProfileResponse.builder()
                 .name(user.getName())
+                .nationality(user.getNationality())
                 .hasWrittenBasicInfo(hasWrittenBasicInfo)
                 .build();
     }
