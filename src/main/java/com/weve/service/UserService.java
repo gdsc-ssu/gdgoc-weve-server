@@ -133,7 +133,6 @@ public class UserService {
                 .matchingInfo(matchingInfo)
                 .build();
 
-
         // 변경된 User 엔티티 저장
         userRepository.save(newUser);
     }

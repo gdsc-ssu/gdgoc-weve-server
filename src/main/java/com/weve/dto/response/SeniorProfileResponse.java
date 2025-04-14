@@ -16,11 +16,19 @@ public class SeniorProfileResponse {
 
     private String name;
     private String nationality;
+    private Boolean hasWrittenBasicInfo;
 
     public static SeniorProfileResponse fromUser(User user) {
+
+        // 기본정보 작성 여부 반환
+        boolean hasWrittenBasicInfo = user.getMatchingInfo() != null
+                && user.getMatchingInfo().getJob() != null
+                && user.getMatchingInfo().getValue() != null
+                && user.getMatchingInfo().getHardship() != null;
+
         return SeniorProfileResponse.builder()
                 .name(user.getName())
-                .nationality(user.getNationality())
+                .hasWrittenBasicInfo(hasWrittenBasicInfo)
                 .build();
     }
 }
