@@ -82,15 +82,17 @@ public class UserService {
 
         // 프로필 이미지 설정을 위한 유저 타입 검사
         ProfileColor profileColor;
-        if (user.getUserType() == UserType.SENIOR) {
-            // 시니어: ORANGE, BLUE, PINK 중 랜덤 선택
-            ProfileColor[] seniorColors = {ProfileColor.ORANGE, ProfileColor.BLUE, ProfileColor.PINK};
-            profileColor = seniorColors[new Random().nextInt(seniorColors.length)];
-        } else {
-            // 주니어: YELLOW, GREEN 중 랜덤 선택
-            ProfileColor[] juniorColors = {ProfileColor.YELLOW, ProfileColor.GREEN};
-            profileColor = juniorColors[new Random().nextInt(juniorColors.length)];
-        }
+        if (user.getProfileColor() == null) {
+            if (user.getUserType() == UserType.SENIOR) {
+                // 시니어: ORANGE, BLUE, PINK 중 랜덤 선택
+                ProfileColor[] seniorColors = {ProfileColor.ORANGE, ProfileColor.BLUE, ProfileColor.PINK};
+                profileColor = seniorColors[new Random().nextInt(seniorColors.length)];
+            } else {
+                // 주니어: YELLOW, GREEN 중 랜덤 선택
+                ProfileColor[] juniorColors = {ProfileColor.YELLOW, ProfileColor.GREEN};
+                profileColor = juniorColors[new Random().nextInt(juniorColors.length)];
+            }
+        } else profileColor = user.getProfileColor();
 
         User patchedUser = user.toBuilder()
                 .name(request.getName() != null ? request.getName() : user.getName())
