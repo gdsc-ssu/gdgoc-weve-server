@@ -5,6 +5,7 @@ import com.weve.common.api.payload.code.status.ErrorStatus;
 import com.weve.domain.Answer;
 import com.weve.domain.User;
 import com.weve.domain.Worry;
+import com.weve.domain.enums.WorryStatus;
 import com.weve.dto.request.CreateAnswerRequest;
 import com.weve.repository.AnswerRepository;
 import lombok.RequiredArgsConstructor;
@@ -57,6 +58,7 @@ public class AnswerService {
                 .build();
 
         answerRepository.save(newAnswer);
+        worry.updateStatus(WorryStatus.ARRIVED);
         log.info("생성된 답변 ID: {}", newAnswer.getId());
     }
 }

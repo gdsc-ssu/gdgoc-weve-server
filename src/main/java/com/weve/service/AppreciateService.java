@@ -6,6 +6,7 @@ import com.weve.common.api.payload.code.status.ErrorStatus;
 import com.weve.domain.Appreciate;
 import com.weve.domain.User;
 import com.weve.domain.Worry;
+import com.weve.domain.enums.WorryStatus;
 import com.weve.dto.request.PostAppreciateRequest;
 import com.weve.dto.response.AppreciateDto;
 import com.weve.dto.response.GetAppreciateListResponse;
@@ -56,6 +57,7 @@ public class AppreciateService {
                 .build();
 
         appreciateRepository.save(appreciate);
+        worry.updateStatus(WorryStatus.RESOLVED);
     }
 
     // 감사편지 상세 조회 (어르신용)

@@ -47,5 +47,10 @@ public class Worry extends BaseEntity {
 
     @OneToOne(mappedBy = "worry", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Appreciate appreciate;
+
+    public void updateStatus(WorryStatus status) {
+        this.status = status;
+    }
 }
+
 
