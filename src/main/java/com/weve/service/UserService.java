@@ -101,6 +101,7 @@ public class UserService {
                 .language((request.getLanguage() != null ? request.getLanguage() : user.getLanguage()))
                 .nationality(newNationality)
                 .profileColor(profileColor)
+                .userType(user.getUserType())
                 .build();
 
         userRepository.save(patchedUser);
