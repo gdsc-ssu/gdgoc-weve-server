@@ -65,7 +65,7 @@ public class WorryService {
                 .junior(user)
                 .content(request.getContent())
                 .title(title)
-                .isAnonymous(request.isAnonymous())
+                .isAnonymous(request.getIsAnonymous())
                 .category(worryCategory)
                 .status(WorryStatus.WAITING)
                 .audioUrl(audioUrl)
