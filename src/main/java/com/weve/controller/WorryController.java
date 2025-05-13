@@ -7,6 +7,9 @@ import com.weve.dto.response.*;
 import com.weve.service.AnswerService;
 import com.weve.service.WorryService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -46,6 +49,11 @@ public class WorryController {
      */
     @GetMapping("/junior")
     @Operation(summary = "고민 목록 조회(JUNIOR ver)", description = "고민 목록을 조회합니다.(JUNIOR ver)")
+    @ApiResponse(
+            responseCode = "200",
+            description = "성공",
+            content = @Content(schema = @Schema(implementation = GetWorriesResponse.JuniorVer.class))
+    )
     public BasicResponse<GetWorriesResponse.JuniorVer> getWorriesForJunior(@AuthenticationPrincipal UserDetails userDetails) {
         String username = userDetails.getUsername();
         GetWorriesResponse.JuniorVer response = worryService.getWorriesForJunior(username);
