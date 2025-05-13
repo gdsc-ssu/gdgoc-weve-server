@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
 
+import static com.weve.domain.enums.UserType.JUNIOR;
 import static com.weve.domain.enums.UserType.SENIOR;
 
 @Slf4j
@@ -113,6 +114,7 @@ public class MessageService {
             user = User.builder()
                     .phoneNumber(phoneNumber)
                     .profileColor(profileColor)
+                    .userType(JUNIOR)
                     .build();
             user = userRepository.save(user);
             isNew = true;
