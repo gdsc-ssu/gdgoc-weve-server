@@ -11,7 +11,7 @@ Our team is driven by a desire to solve one of society’s most pressing yet ove
 
 
 
-## 🧩 Problem Solvingㅁ
+## 🧩 Problem Solving
 We address the growing issue of social isolation among the elderly.
 By connecting seniors with younger generations, we reduce loneliness and mental health risks.
 Our solution empowers seniors to contribute their life experience in meaningful ways.  
